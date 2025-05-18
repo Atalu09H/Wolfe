@@ -36,7 +36,7 @@ def myvalgrad(g, x, n):
         t = np.sqrt(t)
         ex = np.exp(x[i])
         f += ex - t * x[i]
-        g[i] + ex - t
+        g[i] = ex - t
     return f
 
 cg_stat = lsu.CGStats()
