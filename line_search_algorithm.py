@@ -220,6 +220,7 @@ def cg_cubic(a, fa, da, b, fb, db):
     
     v = da + db - 3.0 * (fb - fa) / delta
     t = v * v - da * db
+    
     if t < 0.0:  # Complex roots, use secant method
         if abs(da) < abs(db):
             c = a - (a - b) * (da / (da - db))
@@ -261,13 +262,13 @@ def cg_evaluate(what, nan, Com):
             Com.nf += 1
 
             # Reduce step size if function value is NaN or INF
-            if np.isnan(Com.f) or Com.f >= INF:
+            if not np.isnan(Com.f) or Com.f >= INF:
                 for i in range(Parm.nexpand):
                     alpha *= Parm.nan_decay
                     cg_step(xtemp, x, d, alpha, n)
                     Com.f = Com.cg_value(xtemp, n)
                     Com.nf += 1
-                    if not np.isnan(Com.f) and Com.f < INF:
+                    if np.isnan(Com.f) and Com.f < INF:
                         break
                 if i == Parm.nexpand:
                     return -2
@@ -279,14 +280,14 @@ def cg_evaluate(what, nan, Com):
             Com.df = cg_dot(gtemp, d, n)
 
             # Reduce step size if derivative is NaN or INF
-            if np.isnan(Com.df) or Com.df >= INF:
+            if not np.isnan(Com.df) or Com.df >= INF:
                 for i in range(Parm.nexpand):
                     alpha *= Parm.nan_decay
                     cg_step(xtemp, x, d, alpha, n)
                     Com.cg_grad(gtemp, xtemp, n)
                     Com.ng += 1
                     Com.df = cg_dot(gtemp, d, n)
-                    if not np.isnan(Com.df) and Com.df < INF:
+                    if np.isnan(Com.df) and Com.df < INF:
                         break
                 if i == Parm.nexpand:
                     return -2
@@ -306,7 +307,7 @@ def cg_evaluate(what, nan, Com):
             Com.ng += 1
 
             # Reduce step size if function or derivative is NaN
-            if np.isnan(Com.df) or np.isnan(Com.f):
+            if not np.isnan(Com.df) or (not np.isnan(Com.f)):
                 for i in range(Parm.nexpand):
                     alpha *= Parm.nan_decay
                     cg_step(xtemp, x, d, alpha, n)
@@ -486,9 +487,12 @@ def cg_line(Com):
 
     if status:
         return status  # return if function is NaN
-
-    db = Com.df if AWolfe else Com.df - Com.wolfe_hi
-    d0 = da = Com.df0 if AWolfe else Com.df0 - Com.wolfe_hi
+    if AWolfe:
+        db = Com.df
+        d0 = da = Com.df0
+    else: 
+        db = Com.df - Com.wolfe_hi
+        d0 = da = Com.df0 - Com.wolfe_hi
 
     a = 0.0
     a1 = 0.0
@@ -504,8 +508,9 @@ def cg_line(Com):
                 print(fmt1.format("start", s2, a, b, fa, fb, da, db))
             else:
                 print(fmt2.format("start", s2, a, b, fa, da, db))
-    if Com.QuadOK and Com.f <= Com.f0 and cg_Wolfe(b, Com.f, Com.df, Com):
-        return 0
+    if Com.QuadOK and Com.f <= Com.f0:
+        if cg_Wolfe(b, Com.f, Com.df, Com):
+            return 0
 
     if not AWolfe:
         Com.Wolfe = True
@@ -537,7 +542,7 @@ def cg_line(Com):
         d2, d1 = d1, da
         a2, a1 = a1, a
 
-        if ngrow in (3, 6):
+        if ngrow in {3, 6}:
             if d1 > d2:
                 secant = d1 / (d1 - d2)
                 
@@ -660,13 +665,15 @@ def cg_line(Com):
 
             Com.alpha = alpha
             cg_evaluate("fg", "n", Com)
+            Com.alpha = alpha
             f = Com.f
             df = Com.df
-
-            if Com.QuadOK and cg_Wolfe(alpha, f, df, Com):
-                if PrintLevel >= 2:
-                    print(f"             a: {alpha:13.6e} f: {f:13.6e} df: {df:13.6e} {s1:>1}")
-                return 0
+            
+            if Com.QuadOK:
+                if cg_Wolfe(alpha, f, df, Com):
+                    if PrintLevel >= 2:
+                        print(f"             a: {alpha:13.6e} f: {f:13.6e} df: {df:13.6e} {s1:>1}")
+                    return 0
 
             if not AWolfe:
                 f -= alpha * Com.wolfe_hi
@@ -746,7 +753,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         else:
             Parm = UParm
             
-        PrintLevel = 1 #Parm.PrintLevel
+        PrintLevel = Parm.PrintLevel
         Com.Parm = Parm
         Com.eps = Parm.eps
         Com.PertRule = Parm.PertRule
@@ -868,7 +875,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         t = abs((f - Com.f0) / f) if f != 0.0 else 1.0
                     
         Com.UseCubic = True
-        if t < Parm.CubicCutOff or not Parm.UseCubic:
+        if t < Parm.CubicCutOff or (not Parm.UseCubic):
             Com.UseCubic = False
         if Parm.QuadStep:
             if (t > Parm.QuadCutOff and abs(f) >= Com.SmallCost) or QuadF:
@@ -926,7 +933,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
 
         status = cg_line(Com)
 
-        if status > 0 and not Com.AWolfe:
+        if status > 0 and (not Com.AWolfe):
             if PrintLevel >= 1:
                 print(f"\nWOLFE LINE SEARCH FAILS")
             if status != 3:
@@ -975,7 +982,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
                 g[i] = gtemp[i]
                 t = abs(g[i])
                 gnorm = max(gnorm, t)
-            if Stat is not None:
+            if Stat != None:
                 Stat.gnorm = gnorm
         if Parm.PrintFinal or PrintLevel >= 1:
             mess1 = "Possible causes of this error message:" 
@@ -1052,5 +1059,5 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
             # print(f"gradient evaluations:    {Com.ng:10.0f}")
             # print("===================================\n")
 
-            return status
+        return status
         
