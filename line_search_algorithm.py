@@ -471,8 +471,12 @@ def cg_line(Com):
     Line = False
 
     if PrintLevel >= 1:
-        print("Approximate Wolfe line search" if AWolfe else "Wolfe line search")
-        print("=============================")
+        if AWolfe:
+            print("Approximate Wolfe line search")
+            print("=============================")
+        else:
+            print("Wolfe line search")
+            print("=================")
         
     b = Com.alpha
     if Com.QuadOK:
@@ -521,7 +525,10 @@ def cg_line(Com):
     while db < 0.0:
         if not qb:
             cg_evaluate("f", "n", Com)
-            fb = Com.f if AWolfe else Com.f - b * Com.wolfe_hi
+            if AWolfe:
+                fb = Com.f  
+            else:
+                fb = Com.f - b * Com.wolfe_hi
             qb = True
 
         if fb > Com.fpert:
@@ -606,7 +613,10 @@ def cg_line(Com):
                         alpha = -1.0
                         
                     if alpha <= a or alpha >= b:
-                            alpha = cg_cubic(a, fa, da, b, fb, db) if qb else -1
+                        if qb:
+                            alpha = cg_cubic(a, fa, da, b, fb, db)  
+                        else:
+                            alpha = -1
                     
                     if alpha < 0.0:
                         s1 = "secant   "
@@ -644,20 +654,20 @@ def cg_line(Com):
                 s1 = "bisection"
                 Com.QuadOK = False
 
-                if alpha <= a or alpha >= b:
-                    alpha = 0.5 * (a + b)
-                    s1 = "bisection"
-                    if alpha == a or alpha == b:
-                        return 7
-                    Com.QuadOK = False
+            if alpha <= a or alpha >= b:
+                alpha = 0.5 * (a + b)
+                s1 = "bisection"
+                if alpha == a or alpha == b:
+                    return 7
+                Com.QuadOK = False
 
-                if toggle == 0:
-                    a0, b0 = a, b
-                    da0, db0 = da, db
-                    fa0 = fa
-                    if qb:
-                        fb0 = fb
-                        qb0 = True
+            if toggle == 0:
+                a0, b0 = a, b
+                da0, db0 = da, db
+                fa0 = fa
+                if qb:
+                    fb0 = fb
+                    qb0 = True
 
             toggle += 1
             if toggle > 2:
@@ -747,7 +757,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         
         exit = False
 
-        if UParm == None:
+        if UParm is None:
             Parm = ParmStruct
             cg_default(Parm)
         else:
@@ -872,13 +882,18 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         Com.QuadOK = False
         alpha = Parm.psi2 * alpha
         
-        t = abs((f - Com.f0) / f) if f != 0.0 else 1.0
+        if f != 0.0:
+            t = abs((f - Com.f0) / f)
+        else:
+            t = 1.0
                     
         Com.UseCubic = True
+        
         if t < Parm.CubicCutOff or (not Parm.UseCubic):
             Com.UseCubic = False
         if Parm.QuadStep:
             if (t > Parm.QuadCutOff and abs(f) >= Com.SmallCost) or QuadF:
+                
                 Com.palha = Parm.psi1 * alpha
                 if QuadF:
                     status = cg_evaluate("g", "y", Com)
@@ -950,7 +965,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
             exit = True
             break
 
-        if np.isnan(f) or np.isnan(dphi):
+        if (not np.isnan(f)) or (not np.isnan(dphi)):
             status = 10 
             exit = True
             break

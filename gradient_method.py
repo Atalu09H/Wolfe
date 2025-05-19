@@ -87,7 +87,7 @@ def gradient_method():
         
     print(f"\nPlease press Enter to exit ")
     msvcrt.getch().decode()
-    # input()[0]
+    # input()[0] 
     
 if __name__ == "__main__":
     gradient_method()        
