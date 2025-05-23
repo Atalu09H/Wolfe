@@ -5,8 +5,8 @@ import line_search_user as lsu
 import line_search as ls
 
 
-Com = ls.CGCom()
-Parm = lsu.CGParameter()
+# Com = ls.CGCom()
+# Parm = lsu.CGParameter()
 # Parm.print_Parms()
 # False = False
 # True = True
@@ -245,6 +245,7 @@ def cg_cubic(a, fa, da, b, fb, db):
 # Com = ls.CGCom
 
 def cg_evaluate(what, nan, Com):
+    # Parm = lsu.CGParameter()
     Parm = Com.Parm
     
     n = Com.n
@@ -262,7 +263,7 @@ def cg_evaluate(what, nan, Com):
             Com.nf += 1
 
             # Reduce step size if function value is NaN or INF
-            if not np.isnan(Com.f) or Com.f >= INF:
+            if (not np.isnan(Com.f)) or Com.f >= INF:
                 for i in range(Parm.nexpand):
                     alpha *= Parm.nan_decay
                     cg_step(xtemp, x, d, alpha, n)
@@ -280,7 +281,7 @@ def cg_evaluate(what, nan, Com):
             Com.df = cg_dot(gtemp, d, n)
 
             # Reduce step size if derivative is NaN or INF
-            if not np.isnan(Com.df) or Com.df >= INF:
+            if (not np.isnan(Com.df)) or Com.df >= INF:
                 for i in range(Parm.nexpand):
                     alpha *= Parm.nan_decay
                     cg_step(xtemp, x, d, alpha, n)
@@ -307,7 +308,7 @@ def cg_evaluate(what, nan, Com):
             Com.ng += 1
 
             # Reduce step size if function or derivative is NaN
-            if not np.isnan(Com.df) or (not np.isnan(Com.f)):
+            if (not np.isnan(Com.df)) or (not np.isnan(Com.f)):
                 for i in range(Parm.nexpand):
                     alpha *= Parm.nan_decay
                     cg_step(xtemp, x, d, alpha, n)
@@ -327,6 +328,7 @@ def cg_evaluate(what, nan, Com):
             else:
                 Com.rho = Parm.rho
             Com.alpha = alpha
+            
     else:  # cg_evaluate without NaN checking
         if what == "fg":  # Compute both function and gradient
             if alpha == 0.0:  # cg_evaluate at x
@@ -362,6 +364,7 @@ def cg_evaluate(what, nan, Com):
 # Com = ls.CGCom
 
 def cg_contract(A, fA, dA, B, fB, dB, Com):
+    # Parm = lsu.CGParameter()
     AWolfe = Com.AWolfe
     Parm = Com.Parm
     PrintLevel = Parm.PrintLevel
@@ -448,7 +451,7 @@ def cg_contract(A, fA, dA, B, fB, dB, Com):
             Com.eps = Parm.egrow * (f1 - t) / abs(t)
             Com.fpert = t + abs(t) * Com.eps
         else:
-            Com.fpert = 2. * f1
+            Com.fpert = 2.0 * f1
     else:
         Com.eps = Parm.egrow * (f1 - t)
         Com.fpert = t + Com.eps
@@ -465,6 +468,7 @@ def cg_contract(A, fA, dA, B, fB, dB, Com):
 # Com = ls.CGCom
 
 def cg_line(Com):
+    # Parm = lsu.CGParameter()
     AWolfe = Com.AWolfe
     Parm = Com.Parm
     PrintLevel = Parm.PrintLevel
@@ -720,8 +724,7 @@ def cg_line(Com):
                     print(fmt2.format(s1, s2, a, b, fa, da, db)) 
                 else:
                     print(fmt1.format(s1, s2, a, b, fa, fb, da, db))
-            
-    return 4
+        return 4
 
 ##########################################################################
 
@@ -753,7 +756,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
     while True:    
         # Parm = lsu.CGParameter
         ParmStruct = lsu.CGParameter()
-        # Com = ls.CGCom
+        Com = ls.CGCom
         
         exit = False
 
@@ -803,6 +806,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         nslow = 0
         slowlimit = 2 * n + Parm.nslow
         n5 = n % 5
+        
         Ck = 0.0
         Qk = 0.0
 
@@ -847,7 +851,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
             
         
             
-        if np.isnan(f):
+        if not np.isnan(f):
             status = -1
             exit = True
             break
