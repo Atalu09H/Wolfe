@@ -64,7 +64,7 @@ def gradient_method():
     while True:
         iter += 1
         print(f"d'g = {InnerProduct(g, d, n)}\n")
-        
+          
         lsa.line_search(x, n, d, cg_stat, None, myvalue, mygrad, myvalgrad)
         print(f"line search:\n      nf = {cg_stat.nfunc},\n      ng = {cg_stat.ngrad}\n      alpha = {cg_stat.alpha}")
       
@@ -82,13 +82,18 @@ def gradient_method():
         gnorm2 = InnerProduct(g, g, n)
         print(f"gnorm2 = {gnorm2:10.6e}")
         
+        
+        if np.isnan(fx) or np.isinf(fx) or np.isnan(gnorm2) or np.isinf(gnorm2):
+            print("NaN or Inf detected! Stopping.")
+            break
+        
         if gnorm2 <= 1e-8:
             break
         
         
     print(f"\nPlease press Enter to exit ")
-    msvcrt.getch().decode()
-    # input()[0] 
+    # msvcrt.getch().decode()
+    input() 
     
 if __name__ == "__main__":
     gradient_method()        
