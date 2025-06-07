@@ -6,7 +6,7 @@ import line_search as ls
 
 
 # Com = ls.CGCom()
-# Parm = lsu.CGParameter()
+Parm = lsu.CGParameter()
 # Parm.print_Parms()
 # False = False
 # True = True
