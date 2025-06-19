@@ -89,7 +89,8 @@ def gradient_method():
         
         if gnorm2 <= 1e-8:
             break
-        
+        print("##################################################################")
+
         
     print(f"\nPlease press Enter to exit ")
     # msvcrt.getch().decode()

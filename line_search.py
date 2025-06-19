@@ -2,6 +2,7 @@ import math
 import sys
 import numpy as np
 import line_search_user as lsu
+import gradient_method as grm
 
 # Define constants
 
@@ -41,7 +42,7 @@ class CGCom:
         self.d = np.zeros(1)  # Current search direction (initialize as zero vector)
         self.g = np.zeros(1)  # Gradient at x (initialize as zero vector)
         self.gtemp = np.zeros(1)  # Gradient at x + alpha*d (initialize as zero vector)
-        self.cg_value = None  # Function for evaluating f
-        self.cg_grad = None  # Function for evaluating gradient
-        self.cg_valgrad = None  # Function for evaluating both f and gradient
+        self.cg_value = grm.myvalue  # Function for evaluating f
+        self.cg_grad = grm.mygrad  # Function for evaluating gradient
+        self.cg_valgrad = grm.myvalgrad  # Function for evaluating both f and gradient
         self.Parm = lsu.CGParameter()  # User parameters

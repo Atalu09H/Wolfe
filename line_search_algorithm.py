@@ -6,7 +6,7 @@ import line_search as ls
 
 
 # Com = ls.CGCom()
-Parm = lsu.CGParameter()
+# Parm = lsu.CGParameter()
 # Parm.print_Parms()
 # False = False
 # True = True
@@ -724,7 +724,7 @@ def cg_line(Com):
                     print(fmt2.format(s1, s2, a, b, fa, da, db)) 
                 else:
                     print(fmt1.format(s1, s2, a, b, fa, fb, da, db))
-        return 4
+    return 4
 
 ##########################################################################
 
@@ -756,7 +756,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
     while True:    
         # Parm = lsu.CGParameter
         ParmStruct = lsu.CGParameter()
-        Com = ls.CGCom
+        Com = ls.CGCom()
         
         exit = False
 
@@ -1078,5 +1078,5 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
             # print(f"gradient evaluations:    {Com.ng:10.0f}")
             # print("===================================\n")
 
-        return status
+    return status
         
