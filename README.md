@@ -290,13 +290,13 @@ def cg_evaluate(what, nan, Com):
             Com.nf += 1
 
             # Reduce step size if function value is NaN or INF
-            if (not np.isnan(Com.f)) or Com.f >= INF:
+            if np.isnan(Com.f) or Com.f >= INF:
                 for i in range(Parm.nexpand):
                     alpha *= Parm.nan_decay
                     cg_step(xtemp, x, d, alpha, n)
                     Com.f = Com.cg_value(xtemp, n)
                     Com.nf += 1
-                    if np.isnan(Com.f) and Com.f < INF:
+                    if (not np.isnan(Com.f)) and Com.f < INF:
                         break
                 if i == Parm.nexpand:
                     return -2
@@ -308,14 +308,14 @@ def cg_evaluate(what, nan, Com):
             Com.df = cg_dot(gtemp, d, n)
 
             # Reduce step size if derivative is NaN or INF
-            if (not np.isnan(Com.df)) or Com.df >= INF:
+            if np.isnan(Com.df) or Com.df >= INF:
                 for i in range(Parm.nexpand):
                     alpha *= Parm.nan_decay
                     cg_step(xtemp, x, d, alpha, n)
                     Com.cg_grad(gtemp, xtemp, n)
                     Com.ng += 1
                     Com.df = cg_dot(gtemp, d, n)
-                    if np.isnan(Com.df) and Com.df < INF:
+                    if (not np.isnan(Com.df)) and Com.df < INF:
                         break
                 if i == Parm.nexpand:
                     return -2
@@ -335,7 +335,7 @@ def cg_evaluate(what, nan, Com):
             Com.ng += 1
 
             # Reduce step size if function or derivative is NaN
-            if (not np.isnan(Com.df)) or (not np.isnan(Com.f)):
+            if np.isnan(Com.df) or np.isnan(Com.f):
                 for i in range(Parm.nexpand):
                     alpha *= Parm.nan_decay
                     cg_step(xtemp, x, d, alpha, n)
@@ -347,7 +347,7 @@ def cg_evaluate(what, nan, Com):
                     Com.df = cg_dot(gtemp, d, n)
                     Com.nf += 1
                     Com.ng += 1
-                    if np.isnan(Com.df) and np.isnan(Com.f):
+                    if (not np.isnan(Com.df)) and (not np.isnan(Com.f)):
                         break
                 if i == Parm.nexpand:
                     return -2
@@ -499,7 +499,6 @@ def cg_line(Com):
     AWolfe = Com.AWolfe
     Parm = Com.Parm
     PrintLevel = Parm.PrintLevel
-    Line = False
 
     if PrintLevel >= 1:
         if AWolfe:
@@ -522,6 +521,7 @@ def cg_line(Com):
 
     if status:
         return status  # return if function is NaN
+    
     if AWolfe:
         db = Com.df
         d0 = da = Com.df0
@@ -535,14 +535,15 @@ def cg_line(Com):
     fa = Com.f0
     
     if PrintLevel >= 1:
-            fmt1 = "{:>9} {:>2} a: {:13.6e} b: {:13.6e} fa: {:13.6e} fb: {:13.6e} da: {:13.6e} db: {:13.6e}"
-            fmt2 = "{:>9} {:>2} a: {:13.6e} b: {:13.6e} fa: {:13.6e} fb: x.xxxxxxxxxx da: {:13.6e} db: {:13.6e}"
+            fmt1 = "{:9s} {:2s} a: {:13.6e} b: {:13.6e} fa: {:13.6e} fb: {:13.6e} da: {:13.6e} db: {:13.6e}"
+            fmt2 = "{:9s} {:2s} a: {:13.6e} b: {:13.6e} fa: {:13.6e} fb: x.xxxxxxxxxx da: {:13.6e} db: {:13.6e}"
             s2 = "OK" if Com.QuadOK else ""
                 
             if qb:
                 print(fmt1.format("start", s2, a, b, fa, fb, da, db))
             else:
                 print(fmt2.format("start", s2, a, b, fa, da, db))
+                
     if Com.QuadOK and Com.f <= Com.f0:
         if cg_Wolfe(b, Com.f, Com.df, Com):
             return 0
@@ -567,7 +568,6 @@ def cg_line(Com):
             if status == 0:
                 return 0
             if status == -2:
-                Line = True
                 break
             if Com.neps > Parm.neps:
                 return 6
@@ -580,14 +580,13 @@ def cg_line(Com):
         d2, d1 = d1, da
         a2, a1 = a1, a
 
-        if ngrow in {3, 6}:
+        if ngrow == 3 or ngrow == 6:
             if d1 > d2:
-                secant = d1 / (d1 - d2)
                 
                 if (d1 - d2) / (a1 - a2) >= (d2 - d0) / a2:
-                    b = a1 - (a1 - a2) * secant
+                    b = a1 - (a1 - a2) * d1 / (d1 - d2)
                 else:
-                    b = a1 - Parm.SecantAmp * (a1 - a2) * secant
+                    b = a1 - Parm.SecantAmp * (a1 - a2) * d1 / (d1 - d2)
                 b = min(b, Parm.ExpandSafe * a1)
             else:
                 rho *= Parm.RhoGrow
@@ -603,26 +602,18 @@ def cg_line(Com):
             s2 = "OK" if Com.QuadOK else ""
             print(fmt2.format("expand   ", s2, a, b, fa, da, db))
    
-    if Line:
-        toggle = 0
-        width = b - a
-        qb0 = False
+    
+    toggle = 0
+    width = b - a
+    qb0 = False
 
-        for iter in range(Parm.nline):
-            if toggle == 0 or (toggle == 2 and (b - a) <= width):
-                Com.QuadOK = True
-                if Com.UseCubic and qb:
-                    s1 = "cubic    "
-                    alpha = cg_cubic(a, fa, da, b, fb, db)
-                    if alpha < 0.0:
-                        s1 = "secant   " 
-                        if -da < db:
-                            alpha = a - (a-b)*(da/(da-db)) 
-                        elif da != db:
-                            alpha = b - (a-b)*(db/(da-db)) 
-                        else:
-                            alpha = -1.0
-                else:
+    for iter in range(Parm.nline):
+        if toggle == 0 or (toggle == 2 and (b - a) <= width):
+            Com.QuadOK = True
+            if Com.UseCubic and qb:
+                s1 = "cubic    "
+                alpha = cg_cubic(a, fa, da, b, fb, db)
+                if alpha < 0.0:
                     s1 = "secant   " 
                     if -da < db:
                         alpha = a - (a-b)*(da/(da-db)) 
@@ -630,128 +621,136 @@ def cg_line(Com):
                         alpha = b - (a-b)*(db/(da-db)) 
                     else:
                         alpha = -1.0
-                width = Parm.gamma * (b - a)
+            else:
+                s1 = "secant   " 
+                if -da < db:
+                    alpha = a - (a-b)*(da/(da-db)) 
+                elif da != db:
+                    alpha = b - (a-b)*(db/(da-db)) 
+                else:
+                    alpha = -1.0
+            width = Parm.gamma * (b - a)
+            
+        elif toggle == 1:
+            Com.QuadOK = True
+            if Com.UseCubic:
+                s1 = "cubic    "
+                if Com.alpha == a:
+                    alpha = cg_cubic(a0, fa0, da0, a, fa, da)
+                elif qb0:
+                    alpha = cg_cubic (b, fb, db, b0, fb0, db0) 
+                else:
+                    alpha = -1.0
+                    
+                if alpha <= a or alpha >= b:
+                    if qb:
+                        alpha = cg_cubic(a, fa, da, b, fb, db)  
+                    else:
+                        alpha = -1
                 
-            elif toggle == 1:
-                Com.QuadOK = True
-                if Com.UseCubic:
-                    s1 = "cubic    "
-                    if Com.alpha == a:
-                        alpha = cg_cubic(a0, fa0, da0, a, fa, da)
-                    elif qb0:
-                        alpha = cg_cubic (b, fb, db, b0, fb0, db0) 
+                if alpha < 0.0:
+                    s1 = "secant   "
+                    if -da < db:
+                        alpha = a - (a-b)*(da/(da-db)) 
+                    elif da != db:
+                        alpha = b - (a-b)*(db/(da-db)) 
+                    else:
+                        alpha = -1.0  
+                        
+            else:
+                s1 = "secant   " 
+                if (Com.alpha == a) and da > da0:
+                    alpha = a - (a-a0)*(da/(da-da0)) 
+                elif db < db0:
+                    alpha = b - (b-b0)*(db/(db-db0))
+                else:
+                    if -da < db:
+                        alpha = a - (a-b)*(da/(da-db))
+                    elif da != db:
+                        alpha = b - (a-b)*(db/(da-db))
                     else:
                         alpha = -1.0
-                        
-                    if alpha <= a or alpha >= b:
-                        if qb:
-                            alpha = cg_cubic(a, fa, da, b, fb, db)  
-                        else:
-                            alpha = -1
-                    
-                    if alpha < 0.0:
-                        s1 = "secant   "
-                        if -da < db:
-                            alpha = a - (a-b)*(da/(da-db)) 
-                        elif da != db:
-                            alpha = b - (a-b)*(db/(da-db)) 
-                        else:
-                            alpha = -1.0  
-                            
-                else:
-                    s1 = "secant   " 
-                    if (Com.alpha == a) and da > da0:
-                        alpha = a - (a-a0)*(da/(da-da0)) 
-                    elif db < db0:
-                        alpha = b - (b-b0)*(db/(db-db0))
+
+                if alpha <= a or alpha >= b:
+                    if -da < db:
+                        alpha = a - (a-b)*(da/(da-db))
+                    elif da != db:
+                        alpha = b - (a-b)*(db/(da-db)) 
                     else:
-                        if -da < db:
-                            alpha = a - (a-b)*(da/(da-db))
-                        elif da != db:
-                            alpha = b - (a-b)*(db/(da-db))
-                        else:
-                            alpha = -1.0
+                        alpha = -1.0
+        
+        else:   
+            alpha = 0.5 * (a + b)
+            s1 = "bisection"
+            Com.QuadOK = False
 
-                    if alpha <= a or alpha >= b:
-                        if -da < db:
-                            alpha = a - (a-b)*(da/(da-db))
-                        elif da != db:
-                            alpha = b - (a-b)*(db/(da-db)) 
-                        else:
-                            alpha = -1.0
-            
-            else:   
-                alpha = 0.5 * (a + b)
-                s1 = "bisection"
-                Com.QuadOK = False
+        if alpha <= a or alpha >= b:
+            alpha = 0.5 * (a + b)
+            s1 = "bisection"
+            if alpha == a or alpha == b:
+                return 7
+            Com.QuadOK = False
 
-            if alpha <= a or alpha >= b:
-                alpha = 0.5 * (a + b)
-                s1 = "bisection"
-                if alpha == a or alpha == b:
-                    return 7
-                Com.QuadOK = False
+        if toggle == 0:
+            a0, b0 = a, b
+            da0, db0 = da, db
+            fa0 = fa
+            if qb:
+                fb0 = fb
+                qb0 = True
 
-            if toggle == 0:
-                a0, b0 = a, b
-                da0, db0 = da, db
-                fa0 = fa
+        toggle += 1
+        if toggle > 2:
+            toggle = 0
+
+        Com.alpha = alpha
+        cg_evaluate("fg", "n", Com)
+        Com.alpha = alpha
+        f = Com.f
+        df = Com.df
+        
+        if Com.QuadOK:
+            if cg_Wolfe(alpha, f, df, Com):
+                if PrintLevel >= 2:
+                    print(f"             a: {alpha:13.6e} f: {f:13.6e} df: {df:13.6e} {s1:>1}")
+                return 0
+
+        if not AWolfe:
+            f -= alpha * Com.wolfe_hi
+            df -= Com.wolfe_hi
+
+        if df >= 0.0:
+            b, fb, db = alpha, f, df
+            qb = True
+        elif f <= Com.fpert:
+            a, da, fa = alpha, df, f
+        else:
+            B = b
+            if qb:
+                fB = fb
+            dB = db
+            b, fb, db = alpha, f, df
+            status = cg_contract(a, fa, da, b, fb, db, Com)
+            if status == 0:
+                return 0
+            if status == -1:
+                if Com.neps > Parm.neps:
+                    return 6
+                a, fa, da = b, fb, db
+                b = B
                 if qb:
-                    fb0 = fb
-                    qb0 = True
-
-            toggle += 1
-            if toggle > 2:
-                toggle = 0
-
-            Com.alpha = alpha
-            cg_evaluate("fg", "n", Com)
-            Com.alpha = alpha
-            f = Com.f
-            df = Com.df
-            
-            if Com.QuadOK:
-                if cg_Wolfe(alpha, f, df, Com):
-                    if PrintLevel >= 2:
-                        print(f"             a: {alpha:13.6e} f: {f:13.6e} df: {df:13.6e} {s1:>1}")
-                    return 0
-
-            if not AWolfe:
-                f -= alpha * Com.wolfe_hi
-                df -= Com.wolfe_hi
-
-            if df >= 0.0:
-                b, fb, db = alpha, f, df
-                qb = True
-            elif f <= Com.fpert:
-                a, da, fa = alpha, df, f
+                    fb = fB
+                db = dB
             else:
-                B = b
-                if qb:
-                    fB = fb
-                dB = db
-                b, fb, db = alpha, f, df
-                status = cg_contract(a, fa, da, b, fb, db, Com)
-                if status == 0:
-                    return 0
-                if status == -1:
-                    if Com.neps > Parm.neps:
-                        return 6
-                    a, fa, da = b, fb, db
-                    b = B
-                    if qb:
-                        fb = fB
-                    db = dB
-                else:
-                    qb = True
+                qb = True
 
-            if PrintLevel >= 2:
-                s2 = "OK" if Com.QuadOK else "" 
-                if not qb:
-                    print(fmt2.format(s1, s2, a, b, fa, da, db)) 
-                else:
-                    print(fmt1.format(s1, s2, a, b, fa, fb, da, db))
-        return 4
+        if PrintLevel >= 2:
+            s2 = "OK" if Com.QuadOK else "" 
+            if not qb:
+                print(fmt2.format(s1, s2, a, b, fa, da, db)) 
+            else:
+                print(fmt1.format(s1, s2, a, b, fa, fb, da, db))
+    return 4
 
 ##########################################################################
 
@@ -781,9 +780,9 @@ def cg_Wolfe(alpha, f, dphi, Com):
 def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
     
     while True:    
-        # Parm = lsu.CGParameter
+        Parm = lsu.CGParameter
         ParmStruct = lsu.CGParameter()
-        Com = ls.CGCom
+        Com = ls.CGCom()
         
         exit = False
 
@@ -863,24 +862,50 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
             t = g[i]
             gnorm2 += t * t
             if gnorm < abs (t): gnorm = abs (t)
-            # gnorm = max(gnorm, abs(t))
             d[i] = dir[i]
             dnorm2 += d[i] * d[i]
-
-        for i in range (n5, n, 5):
-            for j in range (5):
-                t = g[i]
-                gnorm2 += t * t
-                if gnorm < abs (t): gnorm = abs (t)
-                # gnorm = max(gnorm, abs(t))
-                d[i] = dir[i]
-                dnorm2 += d[i] * d[i]
+        
+        i = n5
+        while  i < n:
+            t = g[i]
+            gnorm2 += t * t
+            if gnorm < abs (t): gnorm = abs (t)
+            d[i] = dir[i]
+            dnorm2 += d[i] * d[i]
+            i += 1
+            
+            t = g[i]
+            gnorm2 += t * t
+            if gnorm < abs (t): gnorm = abs (t)
+            d[i] = dir[i]
+            dnorm2 += d[i] * d[i]
+            i += 1
+            
+            t = g[i]
+            gnorm2 += t * t
+            if gnorm < abs (t): gnorm = abs (t)
+            d[i] = dir[i]
+            dnorm2 += d[i] * d[i]
+            i += 1
+            
+            t = g[i]
+            gnorm2 += t * t
+            if gnorm < abs (t): gnorm = abs (t)
+            d[i] = dir[i]
+            dnorm2 += d[i] * d[i]
+            i += 1
+            
+            t = g[i]
+            gnorm2 += t * t
+            if gnorm < abs (t): gnorm = abs (t)
+            d[i] = dir[i]
+            dnorm2 += d[i] * d[i]
+            i += 1
             
         
             
-        if not np.isnan(f):
+        if np.isnan(f):
             status = -1
-            exit = True
             break
 
         if PrintLevel >= 1:
@@ -888,13 +913,11 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         
         if cg_tol(gnorm, Com):
             status = 0
-            exit = True
             break
         
         dphi0 = cg_dot(g, d, n)
         if dphi0 > 0.0:
             status = 5
-            exit = True
             break
         
         delta2 = 2 * Parm.delta - 1.0
@@ -993,126 +1016,122 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         cg_copy(x,xtemp,n)
 
         if status:
-            exit = True
             break
 
-        if (not np.isnan(f)) or (not np.isnan(dphi)):
+        if np.isnan(f) or np.isnan(dphi):
             status = 10 
-            exit = True
             break
 
         if -alpha * dphi0 <= Parm.feps * abs(f):
             status = 1
-            exit = True
             break
         
         break
         
         
-    if exit:   
-        # Stat = lsu.CGStats
-        # Com = ls.CGCom     
-        if Stat != None:
-            Stat.f = f
-            Stat.gnorm = gnorm 
-            Stat.nfunc = Com.nf
-            Stat.ngrad = Com.ng
-            for i in range(n):
-                Stat.g[i] = gtemp[i]
-            Stat.alpha = Com.alpha
+    # Stat = lsu.CGStats
+    # Com = ls.CGCom     
+    if Stat != None:
+        Stat.f = f
+        Stat.gnorm = gnorm 
+        Stat.nfunc = Com.nf
+        Stat.ngrad = Com.ng
+        for i in range(n):
+            Stat.g[i] = gtemp[i]
+        Stat.alpha = Com.alpha
 
-        if status > 2:
-            gnorm = 0.0
-            for i in range(n):
-                x[i] = xtemp[i]
-                g[i] = gtemp[i]
-                t = abs(g[i])
-                gnorm = max(gnorm, t)
-            if Stat != None:
-                Stat.gnorm = gnorm
-        if Parm.PrintFinal or PrintLevel >= 1:
-            mess1 = "Possible causes of this error message:" 
-            mess2 = "   - your tolerance may be too strict: grad_tol = "
-            mess3 = "Line search fails"
-            mess4 = "   - your gradient routine has an error"
-            mess5 = "   - the parameter epsilon in cg_descent_c.Parm is too small"
-            print(f"\nTermination status: {status}")
-            if status == -2:
-                print("function value became nan") 
+    if status > 2:
+        gnorm = 0.0
+        for i in range(n):
+            x[i] = xtemp[i]
+            g[i] = gtemp[i]
+            t = abs(g[i])
+            gnorm = max(gnorm, t)
+        if Stat is not None:
+            Stat.gnorm = gnorm
+    if Parm.PrintFinal or PrintLevel >= 1:
+        mess1 = "Possible causes of this error message:" 
+        mess2 = "   - your tolerance may be too strict: grad_tol = "
+        mess3 = "Line search fails"
+        mess4 = "   - your gradient routine has an error"
+        mess5 = "   - the parameter epsilon in cg_descent_c.Parm is too small"
+        print(f"\nTermination status: {status}")
+        if status == -2:
+            print("function value became nan") 
 
-            elif status == -1:
-                print("Objective function value is nan at starting point")
+        elif status == -1:
+            print("Objective function value is nan at starting point")
+        
+
+        elif status == 0:
+            print("Convergence")
+
+        elif status == 1:
+            print("Terminating since change in function value <= feps*|f|")
+
+        elif status == 2:
+            pass
+            # print("Number of iterations exceed specified limit")
+            # print(f"Iterations: {iter:10.0f} maxit: {maxit:10.0f}"
+            # print(f"{messs1:s}")
+            # print(f"{medd2:s} {grad_tol:e}")
+
+        elif status == 3:
+            print("Slope always negative in line search")
+            print(f"{mess1}")
+            print("   - your cost function has an error")
+            print(f"{mess4}")
+
+        elif status == 4:
+            print("Line search fails, too many iterations")
+
+        elif status == 5:
+            print("Search direction not a descent direction")
+
+        elif status == 6:
+            print(f"{mess3}") 
+            print(f"{mess1}")
+            print(f"{mess4}")
+            print(f"{mess5}")
             
+        elif status == 7:
+            print(f"{mess3}")
+            print(f"{mess1}")
 
-            elif status == 0:
-                print("Convergence")
+        elif status == 8:
+            print(f"{mess3}")
+            print(f"{mess1}")
+            print(f"{mess4}")
+            print(f"{mess5}")
+        
+        elif status == 8:
+            print("Debugger is on, function value does not improve")
+            print(f"new value: {f:25.16e} old value: {Com.f0:25.16e}")
+        
+        elif status == 9:
+            print("Insufficient memory")
+        
+        elif status == 10:
+            print("Function beCome nan")
 
-            elif status == 1:
-                print("Terminating since change in function value <= feps*|f|")
+        elif status == 11:
+            print("{nslow} iterations without strict improvement in cost or gradient\n")
 
-            elif status == 2:
-                pass
-                # print("Number of iterations exceed specified limit")
-                # print(f"Iterations: {iter:10.0f} maxit: {maxit:10.0f}"
-                # print(f"{messs1:s}")
-                # print(f"{medd2:s} {grad_tol:e}")
+        # print(f"maximum norm for gradient: {gnorm:13.6e}")
+        # print(f"function value:            {f:13.6e}\n")
+        # print(f"cg  iterations:          {iter:10.0f}")
+        # print(f"function evaluations:    {Com.nf:10.0f}")
+        # print(f"gradient evaluations:    {Com.ng:10.0f}")
+        # print("===================================\n")
 
-            elif status == 3:
-                print("Slope always negative in line search")
-                print(f"{mess1}")
-                print("   - your cost function has an error")
-                print(f"{mess4}")
-
-            elif status == 4:
-                print("Line search fails, too many iterations")
-
-            elif status == 5:
-                print("Search direction not a descent direction")
-
-            elif status == 6:
-                print(f"{mess3}") 
-                print(f"{mess1}")
-                print(f"{mess4}")
-                print(f"{mess5}")
-                
-            elif status == 7:
-                print(f"{mess3}")
-                print(f"{mess1}")
-
-            elif status == 8:
-                print(f"{mess3}")
-                print(f"{mess1}")
-                print(f"{mess4}")
-                print(f"{mess5}")
-            
-            elif status == 8:
-                print("Debugger is on, function value does not improve")
-                print(f"new value: {f:25.16e} old value: {Com.f0:25.16e}")
-            
-            elif status == 9:
-                print("Insufficient memory")
-            
-            elif status == 10:
-                print("Function beCome nan")
-
-            elif status == 11:
-                print("{nslow} iterations without strict improvement in cost or gradient\n")
-
-            # print(f"maximum norm for gradient: {gnorm:13.6e}")
-            # print(f"function value:            {f:13.6e}\n")
-            # print(f"cg  iterations:          {iter:10.0f}")
-            # print(f"function evaluations:    {Com.nf:10.0f}")
-            # print(f"gradient evaluations:    {Com.ng:10.0f}")
-            # print("===================================\n")
-
-        return status
+    return status
         
 
 
 ````
 
 
-### توضیحات بخشی به بخش کد
+### توضیحات بخش به بخش کد
 
 ````python
 def cg_default(Parm):
@@ -1490,13 +1509,13 @@ def cg_evaluate(what, nan, Com):
             Com.nf += 1
 
             # Reduce step size if function value is NaN or INF
-            if (not np.isnan(Com.f)) or Com.f >= INF:
+            if np.isnan(Com.f) or Com.f >= INF:
                 for i in range(Parm.nexpand):
                     alpha *= Parm.nan_decay
                     cg_step(xtemp, x, d, alpha, n)
                     Com.f = Com.cg_value(xtemp, n)
                     Com.nf += 1
-                    if np.isnan(Com.f) and Com.f < INF:
+                    if (not np.isnan(Com.f)) and Com.f < INF:
                         break
                 if i == Parm.nexpand:
                     return -2
@@ -1508,14 +1527,14 @@ def cg_evaluate(what, nan, Com):
             Com.df = cg_dot(gtemp, d, n)
 
             # Reduce step size if derivative is NaN or INF
-            if (not np.isnan(Com.df)) or Com.df >= INF:
+            if np.isnan(Com.df) or Com.df >= INF:
                 for i in range(Parm.nexpand):
                     alpha *= Parm.nan_decay
                     cg_step(xtemp, x, d, alpha, n)
                     Com.cg_grad(gtemp, xtemp, n)
                     Com.ng += 1
                     Com.df = cg_dot(gtemp, d, n)
-                    if np.isnan(Com.df) and Com.df < INF:
+                    if (not np.isnan(Com.df)) and Com.df < INF:
                         break
                 if i == Parm.nexpand:
                     return -2
@@ -1535,7 +1554,7 @@ def cg_evaluate(what, nan, Com):
             Com.ng += 1
 
             # Reduce step size if function or derivative is NaN
-            if (not np.isnan(Com.df)) or (not np.isnan(Com.f)):
+            if np.isnan(Com.df) or np.isnan(Com.f):
                 for i in range(Parm.nexpand):
                     alpha *= Parm.nan_decay
                     cg_step(xtemp, x, d, alpha, n)
@@ -1547,7 +1566,7 @@ def cg_evaluate(what, nan, Com):
                     Com.df = cg_dot(gtemp, d, n)
                     Com.nf += 1
                     Com.ng += 1
-                    if np.isnan(Com.df) and np.isnan(Com.f):
+                    if (not np.isnan(Com.df)) and (not np.isnan(Com.f)):
                         break
                 if i == Parm.nexpand:
                     return -2
@@ -1758,7 +1777,6 @@ def cg_line(Com):
     AWolfe = Com.AWolfe
     Parm = Com.Parm
     PrintLevel = Parm.PrintLevel
-    Line = False
 
     if PrintLevel >= 1:
         if AWolfe:
@@ -1781,6 +1799,7 @@ def cg_line(Com):
 
     if status:
         return status  # return if function is NaN
+    
     if AWolfe:
         db = Com.df
         d0 = da = Com.df0
@@ -1794,14 +1813,15 @@ def cg_line(Com):
     fa = Com.f0
     
     if PrintLevel >= 1:
-            fmt1 = "{:>9} {:>2} a: {:13.6e} b: {:13.6e} fa: {:13.6e} fb: {:13.6e} da: {:13.6e} db: {:13.6e}"
-            fmt2 = "{:>9} {:>2} a: {:13.6e} b: {:13.6e} fa: {:13.6e} fb: x.xxxxxxxxxx da: {:13.6e} db: {:13.6e}"
+            fmt1 = "{:9s} {:2s} a: {:13.6e} b: {:13.6e} fa: {:13.6e} fb: {:13.6e} da: {:13.6e} db: {:13.6e}"
+            fmt2 = "{:9s} {:2s} a: {:13.6e} b: {:13.6e} fa: {:13.6e} fb: x.xxxxxxxxxx da: {:13.6e} db: {:13.6e}"
             s2 = "OK" if Com.QuadOK else ""
                 
             if qb:
                 print(fmt1.format("start", s2, a, b, fa, fb, da, db))
             else:
                 print(fmt2.format("start", s2, a, b, fa, da, db))
+                
     if Com.QuadOK and Com.f <= Com.f0:
         if cg_Wolfe(b, Com.f, Com.df, Com):
             return 0
@@ -1826,7 +1846,6 @@ def cg_line(Com):
             if status == 0:
                 return 0
             if status == -2:
-                Line = True
                 break
             if Com.neps > Parm.neps:
                 return 6
@@ -1839,14 +1858,13 @@ def cg_line(Com):
         d2, d1 = d1, da
         a2, a1 = a1, a
 
-        if ngrow in {3, 6}:
+        if ngrow == 3 or ngrow == 6:
             if d1 > d2:
-                secant = d1 / (d1 - d2)
                 
                 if (d1 - d2) / (a1 - a2) >= (d2 - d0) / a2:
-                    b = a1 - (a1 - a2) * secant
+                    b = a1 - (a1 - a2) * d1 / (d1 - d2)
                 else:
-                    b = a1 - Parm.SecantAmp * (a1 - a2) * secant
+                    b = a1 - Parm.SecantAmp * (a1 - a2) * d1 / (d1 - d2)
                 b = min(b, Parm.ExpandSafe * a1)
             else:
                 rho *= Parm.RhoGrow
@@ -1862,26 +1880,18 @@ def cg_line(Com):
             s2 = "OK" if Com.QuadOK else ""
             print(fmt2.format("expand   ", s2, a, b, fa, da, db))
    
-    if Line:
-        toggle = 0
-        width = b - a
-        qb0 = False
+    
+    toggle = 0
+    width = b - a
+    qb0 = False
 
-        for iter in range(Parm.nline):
-            if toggle == 0 or (toggle == 2 and (b - a) <= width):
-                Com.QuadOK = True
-                if Com.UseCubic and qb:
-                    s1 = "cubic    "
-                    alpha = cg_cubic(a, fa, da, b, fb, db)
-                    if alpha < 0.0:
-                        s1 = "secant   " 
-                        if -da < db:
-                            alpha = a - (a-b)*(da/(da-db)) 
-                        elif da != db:
-                            alpha = b - (a-b)*(db/(da-db)) 
-                        else:
-                            alpha = -1.0
-                else:
+    for iter in range(Parm.nline):
+        if toggle == 0 or (toggle == 2 and (b - a) <= width):
+            Com.QuadOK = True
+            if Com.UseCubic and qb:
+                s1 = "cubic    "
+                alpha = cg_cubic(a, fa, da, b, fb, db)
+                if alpha < 0.0:
                     s1 = "secant   " 
                     if -da < db:
                         alpha = a - (a-b)*(da/(da-db)) 
@@ -1889,128 +1899,137 @@ def cg_line(Com):
                         alpha = b - (a-b)*(db/(da-db)) 
                     else:
                         alpha = -1.0
-                width = Parm.gamma * (b - a)
+            else:
+                s1 = "secant   " 
+                if -da < db:
+                    alpha = a - (a-b)*(da/(da-db)) 
+                elif da != db:
+                    alpha = b - (a-b)*(db/(da-db)) 
+                else:
+                    alpha = -1.0
+            width = Parm.gamma * (b - a)
+            
+        elif toggle == 1:
+            Com.QuadOK = True
+            if Com.UseCubic:
+                s1 = "cubic    "
+                if Com.alpha == a:
+                    alpha = cg_cubic(a0, fa0, da0, a, fa, da)
+                elif qb0:
+                    alpha = cg_cubic (b, fb, db, b0, fb0, db0) 
+                else:
+                    alpha = -1.0
+                    
+                if alpha <= a or alpha >= b:
+                    if qb:
+                        alpha = cg_cubic(a, fa, da, b, fb, db)  
+                    else:
+                        alpha = -1
                 
-            elif toggle == 1:
-                Com.QuadOK = True
-                if Com.UseCubic:
-                    s1 = "cubic    "
-                    if Com.alpha == a:
-                        alpha = cg_cubic(a0, fa0, da0, a, fa, da)
-                    elif qb0:
-                        alpha = cg_cubic (b, fb, db, b0, fb0, db0) 
+                if alpha < 0.0:
+                    s1 = "secant   "
+                    if -da < db:
+                        alpha = a - (a-b)*(da/(da-db)) 
+                    elif da != db:
+                        alpha = b - (a-b)*(db/(da-db)) 
+                    else:
+                        alpha = -1.0  
+                        
+            else:
+                s1 = "secant   " 
+                if (Com.alpha == a) and da > da0:
+                    alpha = a - (a-a0)*(da/(da-da0)) 
+                elif db < db0:
+                    alpha = b - (b-b0)*(db/(db-db0))
+                else:
+                    if -da < db:
+                        alpha = a - (a-b)*(da/(da-db))
+                    elif da != db:
+                        alpha = b - (a-b)*(db/(da-db))
                     else:
                         alpha = -1.0
-                        
-                    if alpha <= a or alpha >= b:
-                        if qb:
-                            alpha = cg_cubic(a, fa, da, b, fb, db)  
-                        else:
-                            alpha = -1
-                    
-                    if alpha < 0.0:
-                        s1 = "secant   "
-                        if -da < db:
-                            alpha = a - (a-b)*(da/(da-db)) 
-                        elif da != db:
-                            alpha = b - (a-b)*(db/(da-db)) 
-                        else:
-                            alpha = -1.0  
-                            
-                else:
-                    s1 = "secant   " 
-                    if (Com.alpha == a) and da > da0:
-                        alpha = a - (a-a0)*(da/(da-da0)) 
-                    elif db < db0:
-                        alpha = b - (b-b0)*(db/(db-db0))
+
+                if alpha <= a or alpha >= b:
+                    if -da < db:
+                        alpha = a - (a-b)*(da/(da-db))
+                    elif da != db:
+                        alpha = b - (a-b)*(db/(da-db)) 
                     else:
-                        if -da < db:
-                            alpha = a - (a-b)*(da/(da-db))
-                        elif da != db:
-                            alpha = b - (a-b)*(db/(da-db))
-                        else:
-                            alpha = -1.0
+                        alpha = -1.0
+        
+        else:   
+            alpha = 0.5 * (a + b)
+            s1 = "bisection"
+            Com.QuadOK = False
 
-                    if alpha <= a or alpha >= b:
-                        if -da < db:
-                            alpha = a - (a-b)*(da/(da-db))
-                        elif da != db:
-                            alpha = b - (a-b)*(db/(da-db)) 
-                        else:
-                            alpha = -1.0
-            
-            else:   
-                alpha = 0.5 * (a + b)
-                s1 = "bisection"
-                Com.QuadOK = False
+        if alpha <= a or alpha >= b:
+            alpha = 0.5 * (a + b)
+            s1 = "bisection"
+            if alpha == a or alpha == b:
+                return 7
+            Com.QuadOK = False
 
-            if alpha <= a or alpha >= b:
-                alpha = 0.5 * (a + b)
-                s1 = "bisection"
-                if alpha == a or alpha == b:
-                    return 7
-                Com.QuadOK = False
+        if toggle == 0:
+            a0, b0 = a, b
+            da0, db0 = da, db
+            fa0 = fa
+            if qb:
+                fb0 = fb
+                qb0 = True
 
-            if toggle == 0:
-                a0, b0 = a, b
-                da0, db0 = da, db
-                fa0 = fa
+        toggle += 1
+        if toggle > 2:
+            toggle = 0
+
+        Com.alpha = alpha
+        cg_evaluate("fg", "n", Com)
+        Com.alpha = alpha
+        f = Com.f
+        df = Com.df
+        
+        if Com.QuadOK:
+            if cg_Wolfe(alpha, f, df, Com):
+                if PrintLevel >= 2:
+                    print(f"             a: {alpha:13.6e} f: {f:13.6e} df: {df:13.6e} {s1:>1}")
+                return 0
+
+        if not AWolfe:
+            f -= alpha * Com.wolfe_hi
+            df -= Com.wolfe_hi
+
+        if df >= 0.0:
+            b, fb, db = alpha, f, df
+            qb = True
+        elif f <= Com.fpert:
+            a, da, fa = alpha, df, f
+        else:
+            B = b
+            if qb:
+                fB = fb
+            dB = db
+            b, fb, db = alpha, f, df
+            status = cg_contract(a, fa, da, b, fb, db, Com)
+            if status == 0:
+                return 0
+            if status == -1:
+                if Com.neps > Parm.neps:
+                    return 6
+                a, fa, da = b, fb, db
+                b = B
                 if qb:
-                    fb0 = fb
-                    qb0 = True
-
-            toggle += 1
-            if toggle > 2:
-                toggle = 0
-
-            Com.alpha = alpha
-            cg_evaluate("fg", "n", Com)
-            Com.alpha = alpha
-            f = Com.f
-            df = Com.df
-            
-            if Com.QuadOK:
-                if cg_Wolfe(alpha, f, df, Com):
-                    if PrintLevel >= 2:
-                        print(f"             a: {alpha:13.6e} f: {f:13.6e} df: {df:13.6e} {s1:>1}")
-                    return 0
-
-            if not AWolfe:
-                f -= alpha * Com.wolfe_hi
-                df -= Com.wolfe_hi
-
-            if df >= 0.0:
-                b, fb, db = alpha, f, df
-                qb = True
-            elif f <= Com.fpert:
-                a, da, fa = alpha, df, f
+                    fb = fB
+                db = dB
             else:
-                B = b
-                if qb:
-                    fB = fb
-                dB = db
-                b, fb, db = alpha, f, df
-                status = cg_contract(a, fa, da, b, fb, db, Com)
-                if status == 0:
-                    return 0
-                if status == -1:
-                    if Com.neps > Parm.neps:
-                        return 6
-                    a, fa, da = b, fb, db
-                    b = B
-                    if qb:
-                        fb = fB
-                    db = dB
-                else:
-                    qb = True
+                qb = True
 
-            if PrintLevel >= 2:
-                s2 = "OK" if Com.QuadOK else "" 
-                if not qb:
-                    print(fmt2.format(s1, s2, a, b, fa, da, db)) 
-                else:
-                    print(fmt1.format(s1, s2, a, b, fa, fb, da, db))
-        return 4
+        if PrintLevel >= 2:
+            s2 = "OK" if Com.QuadOK else "" 
+            if not qb:
+                print(fmt2.format(s1, s2, a, b, fa, da, db)) 
+            else:
+                print(fmt1.format(s1, s2, a, b, fa, fb, da, db))
+    return 4
+
 
 ````
 
@@ -2087,12 +2106,10 @@ def cg_Wolfe(alpha, f, dphi, Com):
 
 
 ````python
-def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
-    
-    while True:    
-        # Parm = lsu.CGParameter
+while True:    
+        Parm = lsu.CGParameter
         ParmStruct = lsu.CGParameter()
-        Com = ls.CGCom
+        Com = ls.CGCom()
         
         exit = False
 
@@ -2172,24 +2189,50 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
             t = g[i]
             gnorm2 += t * t
             if gnorm < abs (t): gnorm = abs (t)
-            # gnorm = max(gnorm, abs(t))
             d[i] = dir[i]
             dnorm2 += d[i] * d[i]
-
-        for i in range (n5, n, 5):
-            for j in range (5):
-                t = g[i]
-                gnorm2 += t * t
-                if gnorm < abs (t): gnorm = abs (t)
-                # gnorm = max(gnorm, abs(t))
-                d[i] = dir[i]
-                dnorm2 += d[i] * d[i]
+        
+        i = n5
+        while  i < n:
+            t = g[i]
+            gnorm2 += t * t
+            if gnorm < abs (t): gnorm = abs (t)
+            d[i] = dir[i]
+            dnorm2 += d[i] * d[i]
+            i += 1
+            
+            t = g[i]
+            gnorm2 += t * t
+            if gnorm < abs (t): gnorm = abs (t)
+            d[i] = dir[i]
+            dnorm2 += d[i] * d[i]
+            i += 1
+            
+            t = g[i]
+            gnorm2 += t * t
+            if gnorm < abs (t): gnorm = abs (t)
+            d[i] = dir[i]
+            dnorm2 += d[i] * d[i]
+            i += 1
+            
+            t = g[i]
+            gnorm2 += t * t
+            if gnorm < abs (t): gnorm = abs (t)
+            d[i] = dir[i]
+            dnorm2 += d[i] * d[i]
+            i += 1
+            
+            t = g[i]
+            gnorm2 += t * t
+            if gnorm < abs (t): gnorm = abs (t)
+            d[i] = dir[i]
+            dnorm2 += d[i] * d[i]
+            i += 1
             
         
             
-        if not np.isnan(f):
+        if np.isnan(f):
             status = -1
-            exit = True
             break
 
         if PrintLevel >= 1:
@@ -2197,13 +2240,11 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         
         if cg_tol(gnorm, Com):
             status = 0
-            exit = True
             break
         
         dphi0 = cg_dot(g, d, n)
         if dphi0 > 0.0:
             status = 5
-            exit = True
             break
         
         delta2 = 2 * Parm.delta - 1.0
@@ -2302,119 +2343,115 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         cg_copy(x,xtemp,n)
 
         if status:
-            exit = True
             break
 
-        if (not np.isnan(f)) or (not np.isnan(dphi)):
+        if np.isnan(f) or np.isnan(dphi):
             status = 10 
-            exit = True
             break
 
         if -alpha * dphi0 <= Parm.feps * abs(f):
             status = 1
-            exit = True
             break
         
         break
         
         
-    if exit:   
-        # Stat = lsu.CGStats
-        # Com = ls.CGCom     
-        if Stat != None:
-            Stat.f = f
-            Stat.gnorm = gnorm 
-            Stat.nfunc = Com.nf
-            Stat.ngrad = Com.ng
-            for i in range(n):
-                Stat.g[i] = gtemp[i]
-            Stat.alpha = Com.alpha
+    # Stat = lsu.CGStats
+    # Com = ls.CGCom     
+    if Stat != None:
+        Stat.f = f
+        Stat.gnorm = gnorm 
+        Stat.nfunc = Com.nf
+        Stat.ngrad = Com.ng
+        for i in range(n):
+            Stat.g[i] = gtemp[i]
+        Stat.alpha = Com.alpha
 
-        if status > 2:
-            gnorm = 0.0
-            for i in range(n):
-                x[i] = xtemp[i]
-                g[i] = gtemp[i]
-                t = abs(g[i])
-                gnorm = max(gnorm, t)
-            if Stat != None:
-                Stat.gnorm = gnorm
-        if Parm.PrintFinal or PrintLevel >= 1:
-            mess1 = "Possible causes of this error message:" 
-            mess2 = "   - your tolerance may be too strict: grad_tol = "
-            mess3 = "Line search fails"
-            mess4 = "   - your gradient routine has an error"
-            mess5 = "   - the parameter epsilon in cg_descent_c.Parm is too small"
-            print(f"\nTermination status: {status}")
-            if status == -2:
-                print("function value became nan") 
+    if status > 2:
+        gnorm = 0.0
+        for i in range(n):
+            x[i] = xtemp[i]
+            g[i] = gtemp[i]
+            t = abs(g[i])
+            gnorm = max(gnorm, t)
+        if Stat is not None:
+            Stat.gnorm = gnorm
+    if Parm.PrintFinal or PrintLevel >= 1:
+        mess1 = "Possible causes of this error message:" 
+        mess2 = "   - your tolerance may be too strict: grad_tol = "
+        mess3 = "Line search fails"
+        mess4 = "   - your gradient routine has an error"
+        mess5 = "   - the parameter epsilon in cg_descent_c.Parm is too small"
+        print(f"\nTermination status: {status}")
+        if status == -2:
+            print("function value became nan") 
 
-            elif status == -1:
-                print("Objective function value is nan at starting point")
+        elif status == -1:
+            print("Objective function value is nan at starting point")
+        
+
+        elif status == 0:
+            print("Convergence")
+
+        elif status == 1:
+            print("Terminating since change in function value <= feps*|f|")
+
+        elif status == 2:
+            pass
+            # print("Number of iterations exceed specified limit")
+            # print(f"Iterations: {iter:10.0f} maxit: {maxit:10.0f}"
+            # print(f"{messs1:s}")
+            # print(f"{medd2:s} {grad_tol:e}")
+
+        elif status == 3:
+            print("Slope always negative in line search")
+            print(f"{mess1}")
+            print("   - your cost function has an error")
+            print(f"{mess4}")
+
+        elif status == 4:
+            print("Line search fails, too many iterations")
+
+        elif status == 5:
+            print("Search direction not a descent direction")
+
+        elif status == 6:
+            print(f"{mess3}") 
+            print(f"{mess1}")
+            print(f"{mess4}")
+            print(f"{mess5}")
             
+        elif status == 7:
+            print(f"{mess3}")
+            print(f"{mess1}")
 
-            elif status == 0:
-                print("Convergence")
+        elif status == 8:
+            print(f"{mess3}")
+            print(f"{mess1}")
+            print(f"{mess4}")
+            print(f"{mess5}")
+        
+        elif status == 8:
+            print("Debugger is on, function value does not improve")
+            print(f"new value: {f:25.16e} old value: {Com.f0:25.16e}")
+        
+        elif status == 9:
+            print("Insufficient memory")
+        
+        elif status == 10:
+            print("Function beCome nan")
 
-            elif status == 1:
-                print("Terminating since change in function value <= feps*|f|")
+        elif status == 11:
+            print("{nslow} iterations without strict improvement in cost or gradient\n")
 
-            elif status == 2:
-                pass
-                # print("Number of iterations exceed specified limit")
-                # print(f"Iterations: {iter:10.0f} maxit: {maxit:10.0f}"
-                # print(f"{messs1:s}")
-                # print(f"{medd2:s} {grad_tol:e}")
+        # print(f"maximum norm for gradient: {gnorm:13.6e}")
+        # print(f"function value:            {f:13.6e}\n")
+        # print(f"cg  iterations:          {iter:10.0f}")
+        # print(f"function evaluations:    {Com.nf:10.0f}")
+        # print(f"gradient evaluations:    {Com.ng:10.0f}")
+        # print("===================================\n")
 
-            elif status == 3:
-                print("Slope always negative in line search")
-                print(f"{mess1}")
-                print("   - your cost function has an error")
-                print(f"{mess4}")
-
-            elif status == 4:
-                print("Line search fails, too many iterations")
-
-            elif status == 5:
-                print("Search direction not a descent direction")
-
-            elif status == 6:
-                print(f"{mess3}") 
-                print(f"{mess1}")
-                print(f"{mess4}")
-                print(f"{mess5}")
-                
-            elif status == 7:
-                print(f"{mess3}")
-                print(f"{mess1}")
-
-            elif status == 8:
-                print(f"{mess3}")
-                print(f"{mess1}")
-                print(f"{mess4}")
-                print(f"{mess5}")
-            
-            elif status == 8:
-                print("Debugger is on, function value does not improve")
-                print(f"new value: {f:25.16e} old value: {Com.f0:25.16e}")
-            
-            elif status == 9:
-                print("Insufficient memory")
-            
-            elif status == 10:
-                print("Function beCome nan")
-
-            elif status == 11:
-                print("{nslow} iterations without strict improvement in cost or gradient\n")
-
-            # print(f"maximum norm for gradient: {gnorm:13.6e}")
-            # print(f"function value:            {f:13.6e}\n")
-            # print(f"cg  iterations:          {iter:10.0f}")
-            # print(f"function evaluations:    {Com.nf:10.0f}")
-            # print(f"gradient evaluations:    {Com.ng:10.0f}")
-            # print("===================================\n")
-
-        return status
+    return status
         
 
 ````
@@ -2573,7 +2610,7 @@ class CGStats:
         self.alpha = 1.0
 
 ````
-### توضیحات بخشی به بخش کد
+<!-- ### توضیحات بخش به بخش کد -->
 
 ---
 ## 3. line_search.py
@@ -2634,7 +2671,7 @@ class CGCom:
         self.cg_valgrad = None  # Function for evaluating both f and gradient
         self.Parm = lsu.CGParameter()  # User parameters
 ````
-### توضیحات بخشی به بخش کد
+<!-- ### توضیحات بخش به بخش کد -->
 
 ---
 ## 4. gradient_method.py
@@ -2732,13 +2769,14 @@ def gradient_method():
         print(f"gnorm2 = {gnorm2:10.6e}")
         
         
-        if np.isnan(fx) or np.isinf(fx) or np.isnan(gnorm2) or np.isinf(gnorm2):
-            print("NaN or Inf detected! Stopping.")
-            break
+        # if np.isnan(fx) or np.isinf(fx) or np.isnan(gnorm2) or np.isinf(gnorm2):
+        #     print("NaN or Inf detected! Stopping.")
+        #     break
         
         if gnorm2 <= 1e-8:
             break
-        
+        print("##################################################################")
+
         
     print(f"\nPlease press Enter to exit ")
     # msvcrt.getch().decode()
@@ -2746,6 +2784,7 @@ def gradient_method():
     
 if __name__ == "__main__":
     gradient_method()        
+                    
             
 
 ````
@@ -2903,17 +2942,18 @@ def gradient_method():
         print(f"gnorm2 = {gnorm2:10.6e}")
         
         
-        if np.isnan(fx) or np.isinf(fx) or np.isnan(gnorm2) or np.isinf(gnorm2):
-            print("NaN or Inf detected! Stopping.")
-            break
+        # if np.isnan(fx) or np.isinf(fx) or np.isnan(gnorm2) or np.isinf(gnorm2):
+        #     print("NaN or Inf detected! Stopping.")
+        #     break
         
         if gnorm2 <= 1e-8:
             break
-        
+        print("##################################################################")
+
         
     print(f"\nPlease press Enter to exit ")
     # msvcrt.getch().decode()
-    input() 
+    input()  
 
 ````
 
