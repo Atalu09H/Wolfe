@@ -263,13 +263,13 @@ def cg_evaluate(what, nan, Com):
             Com.nf += 1
 
             # Reduce step size if function value is NaN or INF
-            if (not np.isnan(Com.f)) or Com.f >= INF:
+            if np.isnan(Com.f) or Com.f >= INF:
                 for i in range(Parm.nexpand):
                     alpha *= Parm.nan_decay
                     cg_step(xtemp, x, d, alpha, n)
                     Com.f = Com.cg_value(xtemp, n)
                     Com.nf += 1
-                    if np.isnan(Com.f) and Com.f < INF:
+                    if (not np.isnan(Com.f)) and Com.f < INF:
                         break
                 if i == Parm.nexpand:
                     return -2
@@ -281,14 +281,14 @@ def cg_evaluate(what, nan, Com):
             Com.df = cg_dot(gtemp, d, n)
 
             # Reduce step size if derivative is NaN or INF
-            if (not np.isnan(Com.df)) or Com.df >= INF:
+            if np.isnan(Com.df) or Com.df >= INF:
                 for i in range(Parm.nexpand):
                     alpha *= Parm.nan_decay
                     cg_step(xtemp, x, d, alpha, n)
                     Com.cg_grad(gtemp, xtemp, n)
                     Com.ng += 1
                     Com.df = cg_dot(gtemp, d, n)
-                    if np.isnan(Com.df) and Com.df < INF:
+                    if (not np.isnan(Com.df)) and Com.df < INF:
                         break
                 if i == Parm.nexpand:
                     return -2
@@ -308,7 +308,7 @@ def cg_evaluate(what, nan, Com):
             Com.ng += 1
 
             # Reduce step size if function or derivative is NaN
-            if (not np.isnan(Com.df)) or (not np.isnan(Com.f)):
+            if np.isnan(Com.df) or np.isnan(Com.f):
                 for i in range(Parm.nexpand):
                     alpha *= Parm.nan_decay
                     cg_step(xtemp, x, d, alpha, n)
@@ -320,7 +320,7 @@ def cg_evaluate(what, nan, Com):
                     Com.df = cg_dot(gtemp, d, n)
                     Com.nf += 1
                     Com.ng += 1
-                    if np.isnan(Com.df) and np.isnan(Com.f):
+                    if (not np.isnan(Com.df)) and (not np.isnan(Com.f)):
                         break
                 if i == Parm.nexpand:
                     return -2
@@ -553,14 +553,13 @@ def cg_line(Com):
         d2, d1 = d1, da
         a2, a1 = a1, a
 
-        if ngrow in {3, 6}:
+        if ngrow == 3 or ngrow == 6:
             if d1 > d2:
-                secant = d1 / (d1 - d2)
                 
                 if (d1 - d2) / (a1 - a2) >= (d2 - d0) / a2:
-                    b = a1 - (a1 - a2) * secant
+                    b = a1 - (a1 - a2) * d1 / (d1 - d2)
                 else:
-                    b = a1 - Parm.SecantAmp * (a1 - a2) * secant
+                    b = a1 - Parm.SecantAmp * (a1 - a2) * d1 / (d1 - d2)
                 b = min(b, Parm.ExpandSafe * a1)
             else:
                 rho *= Parm.RhoGrow
@@ -576,7 +575,7 @@ def cg_line(Com):
             s2 = "OK" if Com.QuadOK else ""
             print(fmt2.format("expand   ", s2, a, b, fa, da, db))
    
-   
+    
     toggle = 0
     width = b - a
     qb0 = False
@@ -758,6 +757,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         ParmStruct = lsu.CGParameter()
         Com = ls.CGCom()
         
+        exit = False
 
         if UParm is None:
             Parm = ParmStruct
@@ -877,7 +877,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
             
         
             
-        if not np.isnan(f):
+        if np.isnan(f):
             status = -1
             break
 
@@ -925,6 +925,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
                 if QuadF:
                     status = cg_evaluate("g", "y", Com)
                     if status:
+                        exit = True
                         break
                     if Com.df > dphi0:
                         alpha = -dphi0 / ((Com.df - dphi0) / Com.alpha)
@@ -932,6 +933,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
                 else:
                     status = cg_evaluate("f", "y", Com)
                     if status:
+                        exit = True
                         break
                     ftemp = Com.f
                     denom = 2.0 * (((ftemp - f) / Com.alpha) - dphi0)
@@ -989,7 +991,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         if status:
             break
 
-        if (not np.isnan(f)) or (not np.isnan(dphi)):
+        if np.isnan(f) or np.isnan(dphi):
             status = 10 
             break
 
@@ -999,7 +1001,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         
         break
         
-          
+        
     # Stat = lsu.CGStats
     # Com = ls.CGCom     
     if Stat != None:
@@ -1018,7 +1020,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
             g[i] = gtemp[i]
             t = abs(g[i])
             gnorm = max(gnorm, t)
-        if Stat != None:
+        if Stat is not None:
             Stat.gnorm = gnorm
     if Parm.PrintFinal or PrintLevel >= 1:
         mess1 = "Possible causes of this error message:" 
@@ -1094,5 +1096,6 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         # print(f"function evaluations:    {Com.nf:10.0f}")
         # print(f"gradient evaluations:    {Com.ng:10.0f}")
         # print("===================================\n")
+
     return status
         
