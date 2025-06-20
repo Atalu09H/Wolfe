@@ -493,7 +493,7 @@ def cg_line(Com):
         status = cg_evaluate("g", "y", Com)
         qb = False
 
-    if status:    #gpt
+    if status:
         return status  # return if function is NaN
     
     if AWolfe:
@@ -756,7 +756,7 @@ def cg_Wolfe(alpha, f, dphi, Com):
 def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
     
     while True:    
-        # Parm = lsu.CGParameter
+        Parm = lsu.CGParameter
         ParmStruct = lsu.CGParameter()
         Com = ls.CGCom()
         
@@ -838,18 +838,46 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
             t = g[i]
             gnorm2 += t * t
             if gnorm < abs (t): gnorm = abs (t)
-            # gnorm = max(gnorm, abs(t))
             d[i] = dir[i]
             dnorm2 += d[i] * d[i]
-
-        for i in range (n5, n, 5):
-            for j in range (5):
-                t = g[i]
-                gnorm2 += t * t
-                if gnorm < abs (t): gnorm = abs (t)
-                # gnorm = max(gnorm, abs(t))
-                d[i] = dir[i]
-                dnorm2 += d[i] * d[i]
+        
+        i = n5
+        while  i < n:
+        # for i in range (n5, n):
+            t = g[i]
+            gnorm2 += t * t
+            if gnorm < abs (t): gnorm = abs (t)
+            d[i] = dir[i]
+            dnorm2 += d[i] * d[i]
+            i += 1
+            
+            t = g[i]
+            gnorm2 += t * t
+            if gnorm < abs (t): gnorm = abs (t)
+            d[i] = dir[i]
+            dnorm2 += d[i] * d[i]
+            i += 1
+            
+            t = g[i]
+            gnorm2 += t * t
+            if gnorm < abs (t): gnorm = abs (t)
+            d[i] = dir[i]
+            dnorm2 += d[i] * d[i]
+            i += 1
+            
+            t = g[i]
+            gnorm2 += t * t
+            if gnorm < abs (t): gnorm = abs (t)
+            d[i] = dir[i]
+            dnorm2 += d[i] * d[i]
+            i += 1
+            
+            t = g[i]
+            gnorm2 += t * t
+            if gnorm < abs (t): gnorm = abs (t)
+            d[i] = dir[i]
+            dnorm2 += d[i] * d[i]
+            i += 1
             
         
             
