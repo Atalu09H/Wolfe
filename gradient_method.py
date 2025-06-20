@@ -83,9 +83,9 @@ def gradient_method():
         print(f"gnorm2 = {gnorm2:10.6e}")
         
         
-        if np.isnan(fx) or np.isinf(fx) or np.isnan(gnorm2) or np.isinf(gnorm2):
-            print("NaN or Inf detected! Stopping.")
-            break
+        # if np.isnan(fx) or np.isinf(fx) or np.isnan(gnorm2) or np.isinf(gnorm2):
+        #     print("NaN or Inf detected! Stopping.")
+        #     break
         
         if gnorm2 <= 1e-8:
             break
