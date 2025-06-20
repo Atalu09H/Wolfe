@@ -472,7 +472,6 @@ def cg_line(Com):
     AWolfe = Com.AWolfe
     Parm = Com.Parm
     PrintLevel = Parm.PrintLevel
-    Line = False
 
     if PrintLevel >= 1:
         if AWolfe:
@@ -542,7 +541,6 @@ def cg_line(Com):
             if status == 0:
                 return 0
             if status == -2:
-                Line = True
                 break
             if Com.neps > Parm.neps:
                 return 6
@@ -578,7 +576,7 @@ def cg_line(Com):
             s2 = "OK" if Com.QuadOK else ""
             print(fmt2.format("expand   ", s2, a, b, fa, da, db))
    
-    # if Line:
+   
     toggle = 0
     width = b - a
     qb0 = False
@@ -760,7 +758,6 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         ParmStruct = lsu.CGParameter()
         Com = ls.CGCom()
         
-        exit = False
 
         if UParm is None:
             Parm = ParmStruct
@@ -843,7 +840,6 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         
         i = n5
         while  i < n:
-        # for i in range (n5, n):
             t = g[i]
             gnorm2 += t * t
             if gnorm < abs (t): gnorm = abs (t)
@@ -883,7 +879,6 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
             
         if not np.isnan(f):
             status = -1
-            exit = True
             break
 
         if PrintLevel >= 1:
@@ -891,13 +886,11 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         
         if cg_tol(gnorm, Com):
             status = 0
-            exit = True
             break
         
         dphi0 = cg_dot(g, d, n)
         if dphi0 > 0.0:
             status = 5
-            exit = True
             break
         
         delta2 = 2 * Parm.delta - 1.0
@@ -932,7 +925,6 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
                 if QuadF:
                     status = cg_evaluate("g", "y", Com)
                     if status:
-                        exit = True
                         break
                     if Com.df > dphi0:
                         alpha = -dphi0 / ((Com.df - dphi0) / Com.alpha)
@@ -940,7 +932,6 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
                 else:
                     status = cg_evaluate("f", "y", Com)
                     if status:
-                        exit = True
                         break
                     ftemp = Com.f
                     denom = 2.0 * (((ftemp - f) / Com.alpha) - dphi0)
@@ -996,23 +987,19 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         cg_copy(x,xtemp,n)
 
         if status:
-            exit = True
             break
 
         if (not np.isnan(f)) or (not np.isnan(dphi)):
             status = 10 
-            exit = True
             break
 
         if -alpha * dphi0 <= Parm.feps * abs(f):
             status = 1
-            exit = True
             break
         
         break
         
-        
-    # if exit:   
+          
     # Stat = lsu.CGStats
     # Com = ls.CGCom     
     if Stat != None:
@@ -1107,6 +1094,5 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         # print(f"function evaluations:    {Com.nf:10.0f}")
         # print(f"gradient evaluations:    {Com.ng:10.0f}")
         # print("===================================\n")
-
     return status
         
