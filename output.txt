@@ -1,0 +1,233 @@
+d'g = -2138.454555
+line search:
+      nf = 4,
+      ng=3
+      alpha=0.186423
+iter = 1    , fxold = -3.996348e+02, fx= -6.485740e+02, fxold-fx=2.489393e+02
+gnorm2 = 4.712051e+01 
+d'g = -47.120508
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.178075
+iter = 2    , fxold = -6.485740e+02, fx= -6.525787e+02, fxold-fx=4.004643e+00
+gnorm2 = 4.287803e+00 
+d'g = -4.287803
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.150147
+iter = 3    , fxold = -6.525787e+02, fx= -6.529013e+02, fxold-fx=3.225952e-01
+gnorm2 = 8.242010e-01 
+d'g = -0.824201
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.215548
+iter = 4    , fxold = -6.529013e+02, fx= -6.529909e+02, fxold-fx=8.964788e-02
+gnorm2 = 5.011478e-01 
+d'g = -0.501148
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.157967
+iter = 5    , fxold = -6.529909e+02, fx= -6.530303e+02, fxold-fx=3.938306e-02
+gnorm2 = 1.962625e-01 
+d'g = -0.196263
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.204212
+iter = 6    , fxold = -6.530303e+02, fx= -6.530505e+02, fxold-fx=2.018493e-02
+gnorm2 = 1.397698e-01 
+d'g = -0.139770
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.162453
+iter = 7    , fxold = -6.530505e+02, fx= -6.530618e+02, fxold-fx=1.130991e-02
+gnorm2 = 6.532040e-02 
+d'g = -0.065320
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.198551
+iter = 8    , fxold = -6.530618e+02, fx= -6.530683e+02, fxold-fx=6.513147e-03
+gnorm2 = 4.708433e-02 
+d'g = -0.047084
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.166403
+iter = 9    , fxold = -6.530683e+02, fx= -6.530722e+02, fxold-fx=3.908634e-03
+gnorm2 = 2.422459e-02 
+d'g = -0.024225
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.195764
+iter = 10   , fxold = -6.530722e+02, fx= -6.530746e+02, fxold-fx=2.377196e-03
+gnorm2 = 1.753300e-02 
+d'g = -0.017533
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.169133
+iter = 11   , fxold = -6.530746e+02, fx= -6.530761e+02, fxold-fx=1.480845e-03
+gnorm2 = 9.557384e-03 
+d'g = -0.009557
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.194307
+iter = 12   , fxold = -6.530761e+02, fx= -6.530770e+02, fxold-fx=9.298302e-04
+gnorm2 = 6.943192e-03 
+d'g = -0.006943
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.170862
+iter = 13   , fxold = -6.530770e+02, fx= -6.530776e+02, fxold-fx=5.928011e-04
+gnorm2 = 3.922129e-03 
+d'g = -0.003922
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.193566
+iter = 14   , fxold = -6.530776e+02, fx= -6.530780e+02, fxold-fx=3.798440e-04
+gnorm2 = 2.861277e-03 
+d'g = -0.002861
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.171874
+iter = 15   , fxold = -6.530780e+02, fx= -6.530782e+02, fxold-fx=2.458419e-04
+gnorm2 = 1.651803e-03 
+d'g = -0.001652
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.193256
+iter = 16   , fxold = -6.530782e+02, fx= -6.530784e+02, fxold-fx=1.596368e-04
+gnorm2 = 1.210632e-03 
+d'g = -0.001211
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.172387
+iter = 17   , fxold = -6.530784e+02, fx= -6.530785e+02, fxold-fx=1.043579e-04
+gnorm2 = 7.077660e-04 
+d'g = -0.000708
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.193226
+iter = 18   , fxold = -6.530785e+02, fx= -6.530785e+02, fxold-fx=6.836806e-05
+gnorm2 = 5.213443e-04 
+d'g = -0.000521
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.172557
+iter = 19   , fxold = -6.530785e+02, fx= -6.530786e+02, fxold-fx=4.499350e-05
+gnorm2 = 3.067814e-04 
+d'g = -0.000307
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.193388
+iter = 20   , fxold = -6.530786e+02, fx= -6.530786e+02, fxold-fx=2.965232e-05
+gnorm2 = 2.271885e-04 
+d'g = -0.000227
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.155286
+iter = 21   , fxold = -6.530786e+02, fx= -6.530786e+02, fxold-fx=1.940605e-05
+gnorm2 = 1.108647e-04 
+d'g = -0.000111
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.229683
+iter = 22   , fxold = -6.530786e+02, fx= -6.530786e+02, fxold-fx=1.400265e-05
+gnorm2 = 1.034923e-04 
+d'g = -0.000103
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.146342
+iter = 23   , fxold = -6.530786e+02, fx= -6.530787e+02, fxold-fx=8.330677e-06
+gnorm2 = 4.430449e-05 
+d'g = -0.000044
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.256543
+iter = 24   , fxold = -6.530787e+02, fx= -6.530787e+02, fxold-fx=6.250521e-06
+gnorm2 = 4.738758e-05 
+d'g = -0.000047
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.135434
+iter = 25   , fxold = -6.530787e+02, fx= -6.530787e+02, fxold-fx=3.530083e-06
+gnorm2 = 1.668734e-05 
+d'g = -0.000017
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.305299
+iter = 26   , fxold = -6.530787e+02, fx= -6.530787e+02, fxold-fx=2.801769e-06
+gnorm2 = 2.133402e-05 
+d'g = -0.000021
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.122853
+iter = 27   , fxold = -6.530787e+02, fx= -6.530787e+02, fxold-fx=1.441583e-06
+gnorm2 = 5.571147e-06 
+d'g = -0.000006
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.406676
+iter = 28   , fxold = -6.530787e+02, fx= -6.530787e+02, fxold-fx=1.246002e-06
+gnorm2 = 8.690243e-06 
+d'g = -0.000009
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.109464
+iter = 29   , fxold = -6.530787e+02, fx= -6.530787e+02, fxold-fx=5.232148e-07
+gnorm2 = 1.395707e-06 
+d'g = -0.000001
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.655973
+iter = 30   , fxold = -6.530787e+02, fx= -6.530787e+02, fxold-fx=5.034988e-07
+gnorm2 = 1.926213e-06 
+d'g = -0.000002
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.097441
+iter = 31   , fxold = -6.530787e+02, fx= -6.530787e+02, fxold-fx=1.032321e-07
+gnorm2 = 1.298002e-07 
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.816679
+iter = 32   , fxold = -6.530787e+02, fx= -6.530787e+02, fxold-fx=5.829986e-08
+gnorm2 = 7.930006e-08 
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.095055
+iter = 33   , fxold = -6.530787e+02, fx= -6.530787e+02, fxold-fx=4.146045e-09
+gnorm2 = 3.744387e-09 
+
+Please press Enter to exit

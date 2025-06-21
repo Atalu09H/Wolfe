@@ -64,9 +64,9 @@ class CGParameter:
 # cg_stats structure
 class CGStats:
     def __init__(self):
-        self.f = 0.0
-        self.gnorm = 0.0
-        self.nfunc = 0 
-        self.ngrad = 0 
+        self.f = None
+        self.gnorm = None
+        self.nfunc = None 
+        self.ngrad = None 
         self.g = None 
-        self.alpha = 1.0
+        self.alpha = None

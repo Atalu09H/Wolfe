@@ -757,7 +757,6 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         ParmStruct = lsu.CGParameter()
         Com = ls.CGCom()
         
-        exit = False
 
         if UParm is None:
             Parm = ParmStruct
@@ -921,11 +920,10 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         if Parm.QuadStep:
             if (t > Parm.QuadCutOff and abs(f) >= Com.SmallCost) or QuadF:
                 
-                Com.palha = Parm.psi1 * alpha
+                Com.alpha = Parm.psi1 * alpha
                 if QuadF:
                     status = cg_evaluate("g", "y", Com)
                     if status:
-                        exit = True
                         break
                     if Com.df > dphi0:
                         alpha = -dphi0 / ((Com.df - dphi0) / Com.alpha)
@@ -933,7 +931,6 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
                 else:
                     status = cg_evaluate("f", "y", Com)
                     if status:
-                        exit = True
                         break
                     ftemp = Com.f
                     denom = 2.0 * (((ftemp - f) / Com.alpha) - dphi0)
@@ -1004,7 +1001,7 @@ def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
         
     # Stat = lsu.CGStats
     # Com = ls.CGCom     
-    if Stat != None:
+    if Stat is not None:
         Stat.f = f
         Stat.gnorm = gnorm 
         Stat.nfunc = Com.nf
