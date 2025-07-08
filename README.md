@@ -2103,7 +2103,9 @@ def cg_Wolfe(alpha, f, dphi, Com):
 
 
 ````python
-while True:    
+def line_search(x, n, dir, Stat, UParm, value, grad, valgrad):
+    
+    while True:    
         Parm = lsu.CGParameter
         ParmStruct = lsu.CGParameter()
         Com = ls.CGCom()
