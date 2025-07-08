@@ -16,34 +16,30 @@ def InnerProduct(v, u, n):
 
 def myvalue(x, n):
     f = 0.0
-    for i in range(n):
-        t = i + 1
-        t = np.sqrt(t)
-        f += np.exp(x[i]) - t * x[i]
+    for i in range(n-1):
+        f += 100.0 * (x[i+1] - x[i]**2)**2 + (1 - x[i])**2
     return f
 
 def mygrad(g, x, n):
-    for i in range(n):
-        t = i + 1
-        t = np.sqrt(t)
-        g[i] = np.exp(x[i]) - t
-    return
-
+    g[:] = 0.0
+    for i in range(n-1):
+        g[i] += -400.0 * x[i] * (x[i+1] - x[i]**2) - 2.0 * (1 - x[i])
+        g[i+1] += 200.0 * (x[i+1] - x[i]**2)
+        
 def myvalgrad(g, x, n):
     f = 0.0
-    for i in range(n):
-        t = i + 1
-        t = np.sqrt(t)
-        ex = np.exp(x[i])
-        f += ex - t * x[i]
-        g[i] = ex - t
+    g[:] = 0.0
+    for i in range(n-1):
+        t1 = x[i+1] - x[i] ** 2
+        t2 = 1 - x[i]
+        f += 100.0 * t1**2 + t2**2
+        g[i] += -400.0 * x[i] * t1 - 2.0 *t2
+        g[i+1] += 200.0 * t1
     return f
-
-
-
+        
 def gradient_method():
     cg_stat = lsu.CGStats()
-    n = 100
+    n = 10
     x = np.zeros(n)
     d = np.zeros(n)
     g = np.zeros(n)
@@ -52,7 +48,7 @@ def gradient_method():
     iter = 0
     
     for i in range(n):
-        x[i] = 1.0
+        x[i] = -1.2 if i % 2 == 0 else 1.0
     # x[:] = [1.0] * len(x)
     
     fx = fx0 = myvalue(x, n)

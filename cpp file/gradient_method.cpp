@@ -39,7 +39,7 @@ int main (void)
 	cg_stats_struct cg_stat;
 	
     /* allocate space for solution */
-    n = 100;
+    n = 10;
     x = (double *) malloc (n*sizeof (double)) ;
 	d = (double *) malloc (n*sizeof (double)) ;
 	g = (double *) malloc (n*sizeof (double)) ;
@@ -47,7 +47,11 @@ int main (void)
 
 	iter = 0;
 	/* set starting guess */
-    for (i = 0; i < n; i++) x [i] = 1. ;
+    for (i = 0; i < n; i++)
+    {
+        if (i % 2 == 0) x [i] = -1.2;
+        else 1.0;
+    }
 	fx=fx0 = myvalue(x,n);
 	mygrad(g,x,n);
 	for (i = 0; i < n; i++) 
@@ -108,9 +112,7 @@ double myvalue
     f = 0. ;
     for (i = 0; i < n; i++)
     {
-        t = i+1 ;
-        t = sqrt (t) ;
-        f += exp (x [i]) - t*x [i] ;
+        f += 100.0 * (x[i+1] - x[i]**2)**2 + (1 - x[i])**2 ;
     }
     return (f) ;
 }
@@ -126,9 +128,12 @@ void mygrad
     INT i ;
     for (i = 0; i < n; i++)
     {
-        t = i + 1 ;
-        t = sqrt (t) ;
-        g [i] = exp (x [i]) -  t ;
+        g[i] = 0.0
+    }
+    for (i = 0; i < n; i++)
+    {
+        g[i] += -400.0 * x[i] * (x[i+1] - x[i]**2) - 2.0 * (1 - x[i]);
+        g[i+1] += 200.0 * (x[i+1] - x[i]**2);
     }
     return ;
 }
@@ -145,11 +150,15 @@ double myvalgrad
     f = (double) 0 ;
     for (i = 0; i < n; i++)
     {
-        t = i + 1 ;
-        t = sqrt (t) ;
-        ex = exp (x [i]) ;
-        f += ex - t*x [i] ;
-        g [i] = ex -  t ;
+        g[i] = 0.0
+    }
+    for (i = 0; i < n; i++)
+    {
+        t1 = x[i+1] - x[i] ** 2;
+        t2 = 1 - x[i];
+        f += 100.0 * t1**2 + t2**2;
+        g[i] += -400.0 * x[i] * t1 - 2.0 *t2;
+        g[i+1] += 200.0 * t1;
     }
     return (f) ;
 }

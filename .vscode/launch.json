@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "d:/hossein/uni/term 8/project/Project",
-      "program": "d:/hossein/uni/term 8/project/Project/build/Debug/outDebug",
+      "cwd": "d:/hossein/uni/term 8/project/Project/Wolfe/cpp file",
+      "program": "d:/hossein/uni/term 8/project/Project/Wolfe/cpp file/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
