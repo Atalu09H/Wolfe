@@ -2,6 +2,7 @@ import numpy as np
 import line_search_user as lsu
 import line_search_algorithm as lsa
 import msvcrt
+import time
 
     
 def InnerProduct(v, u, n):
@@ -39,6 +40,7 @@ def myvalgrad(g, x, n):
         g[i] = ex - t
     return f
 
+start_time = time.time()
 
 
 def gradient_method():
@@ -90,7 +92,9 @@ def gradient_method():
         if gnorm2 <= 1e-8:
             break
         print("##################################################################")
-
+        
+    end_time = time.time()
+    print(f"Time : {end_time - start_time} seconds")
         
     print(f"\nPlease press Enter to exit ")
     # msvcrt.getch().decode()
