@@ -41,7 +41,7 @@ Start_time = time.time()
         
 def gradient_method():
     cg_stat = lsu.CGStats()
-    n = 1000
+    n = 700
     x = np.zeros(n)
     d = np.zeros(n)
     g = np.zeros(n)
