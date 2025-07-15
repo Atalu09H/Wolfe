@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "d:/hossein/uni/term 8/project/khaterer",
-      "program": "d:/hossein/uni/term 8/project/khaterer/build/Debug/outDebug",
+      "cwd": "D:\hossein\uni\term 8\project\Project\Wolfe\cpp file",
+      "program": "D:\hossein\uni\term 8\project\Project\Wolfe\cpp file\gradient_method.exe",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

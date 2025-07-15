@@ -1,6 +1,7 @@
 {
   "version": "0.2.0",
   "configurations": [
+    
     {
       "name": "C/C++ Runner: Debug Session",
       "type": "cppdbg",
@@ -8,8 +9,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "d:/hossein/uni/term 8/project/Project",
-      "program": "d:/hossein/uni/term 8/project/Project/build/Debug/outDebug",
+      "cwd": "D:\hossein\uni\term 8\project\Project\Wolfe\cpp file",
+      "program": "D:\hossein\uni\term 8\project\Project\Wolfe\cpp file\gradient_method.exe",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
