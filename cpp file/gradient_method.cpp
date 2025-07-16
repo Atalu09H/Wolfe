@@ -39,7 +39,7 @@ int main (void)
 	cg_stats_struct cg_stat;
 	
     /* allocate space for solution */
-    n = 100;
+    n = 10000;
     x = (double *) malloc (n*sizeof (double)) ;
 	d = (double *) malloc (n*sizeof (double)) ;
 	g = (double *) malloc (n*sizeof (double)) ;
@@ -60,7 +60,7 @@ int main (void)
 
 
 	/* run the code */
-	line_search (x, n, d, cg_stat, NULL,myvalue, mygrad, myvalgrad) ;
+	line_search (x, n, d, &cg_stat, NULL,myvalue, mygrad, myvalgrad) ;
 	
 	printf("line search:\n      nf = %d,\n      ng=%d\n      alpha=%f\n",cg_stat.nfunc,cg_stat.ngrad,cg_stat.alpha);
 

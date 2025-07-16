@@ -1,9 +1,20 @@
 first function :
+
 n = 2 :
     |
     |
    \ /
     *
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=2
+      alpha=0.782247
+iter = 5    , fxold = 1.924085e+00, fx= 1.924084e+00, fxold-fx=1.231867e-07
+gnorm2 = 7.272272e-09
+
+python_:
 d'g = -3.149363145528299e-07
 
 line search:
@@ -20,6 +31,16 @@ n = 3 :
     |
    \ /
     *
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.894197
+iter = 7    , fxold = 2.704709e+00, fx= 2.704709e+00, fxold-fx=9.297460e-09
+gnorm2 = 2.593579e-10
+
+python_:
 d'g = -1.8905045831838312e-08
 
 line search:
@@ -36,6 +57,16 @@ n = 10 :
     |
    \ /
     *
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.834488
+iter = 11   , fxold = 3.195059e+00, fx= 3.195059e+00, fxold-fx=9.156254e-09
+gnorm2 = 2.468767e-09
+
+python_:
 d'g = -1.9950018288509992e-08
 
 line search:
@@ -52,6 +83,16 @@ n = 50 :
     |
    \ /
     *
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.137314
+iter = 26   , fxold = -1.505465e+02, fx= -1.505465e+02, fxold-fx=1.105292e-09
+gnorm2 = 9.142922e-10
+
+python_:
 d'g = -1.463522311441987e-08
 
 line search:
@@ -68,6 +109,16 @@ n = 100 :
     |
    \ /
     *
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.095055
+iter = 33   , fxold = -6.530787e+02, fx= -6.530787e+02, fxold-fx=4.146045e-09
+gnorm2 = 3.744387e-09
+
+python_:
 d'g = -7.930011246561993e-08
 
 line search:
@@ -84,6 +135,16 @@ n = 200 :
     |
    \ /
     *
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.073851
+iter = 41   , fxold = -2.493202e+03, fx= -2.493202e+03, fxold-fx=1.921762e-09
+gnorm2 = 6.039930e-09
+
+python_:
 d'g = -4.72885662787257e-08
 
 line search:
@@ -100,6 +161,16 @@ n = 500 :
     |
    \ /
     *
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.041632
+iter = 52   , fxold = -1.324635e+04, fx= -1.324635e+04, fxold-fx=3.925379e-09
+gnorm2 = 5.707137e-09
+
+python_:
 d'g = -1.711973455122779e-07
 
 line search:
@@ -116,6 +187,16 @@ n = 700 :
     |
    \ /
     *
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.035112
+iter = 50   , fxold = -2.401061e+04, fx= -2.401061e+04, fxold-fx=3.819878e-09
+gnorm2 = 6.549569e-09
+
+python_:
 d'g = -1.9880471249035264e-07
 
 line search:
@@ -132,6 +213,16 @@ n = 1000 :
     |
    \ /
     *
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.072858
+iter = 48   , fxold = -4.474419e+04, fx= -4.474419e+04, fxold-fx=4.947651e-10
+gnorm2 = 5.707705e-09
+
+python_:
 d'g = -1.2057352723486298e-08
 
 line search:
@@ -148,6 +239,16 @@ n = 2000 :
     |
    \ /
     *
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.022838
+iter = 80   , fxold = -1.471735e+05, fx= -1.471735e+05, fxold-fx=5.820766e-10
+gnorm2 = 6.384436e-09
+
+python_:
 d'g = -6.763181622287261e-08
 
 line search:
@@ -164,6 +265,16 @@ n = 3000 :
     |
    \ /
     *
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.020603
+iter = 61   , fxold = -2.925501e+05, fx= -2.925501e+05, fxold-fx=7.566996e-10
+gnorm2 = 8.232076e-09
+
+python_:
 d'g = -7.534959568709616e-08
 
 line search:
@@ -180,6 +291,16 @@ n = 4000 :
     |
    \ /
     *
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.014799
+iter = 80   , fxold = -4.746425e+05, fx= -4.746425e+05, fxold-fx=1.513399e-09
+gnorm2 = 6.508867e-09
+
+python_:
 d'g = -2.7658319483569864e-07
 
 line search:
@@ -196,6 +317,16 @@ n = 5000 :
     |
    \ /
     *
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.015101
+iter = 95   , fxold = -6.896068e+05, fx= -6.896068e+05, fxold-fx=4.656613e-10
+gnorm2 = 8.976835e-09
+
+python_:
 d'g = -4.0764117001913153e-07
 
 line search:
@@ -212,6 +343,16 @@ n = 6000 :
     |
    \ /
     *
+cpp_:
+d'g = -0.000001
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.011903
+iter = 91   , fxold = -9.347349e+05, fx= -9.347349e+05, fxold-fx=4.423782e-09
+gnorm2 = 9.562973e-09
+
+python_:
 d'g = -4.589056067096111e-07
 
 line search:
@@ -228,6 +369,16 @@ n = 10000 :
     |
    \ /
     *
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.009657
+iter = 94   , fxold = -2.181405e+06, fx= -2.181405e+06, fxold-fx=4.656613e-10
+gnorm2 = 4.632617e-09
+
+python_:
 d'g = -7.165547711502555e-08
 
 line search:
@@ -238,173 +389,4 @@ iter = 99   , fxold = -2.181405e+06, fx =-2.181405e+06, fxold-fx = 1.396984e-09
 
 gnorm2 = 8.016335e-09
 Time : 16.73831343650818 seconds
-
-
-###################################################
-#*************************************************#
-###################################################
-
-
-rosenbrock function:
-n = 2 :
-    |
-    |
-   \ /
-    *
-d'g = -1.654774381772352e-07
-
-line search:
-      nf = 3,
-      ng = 3
-      alpha = 0.000917985808777414
-iter = 265  , fxold = 4.444268e-09, fx =4.360720e-09, fxold-fx = 8.354813e-11
-
-gnorm2 = 4.536385e-09
-Time : 0.15508389472961426 second
-
-n = 3 :
-    |
-    |
-   \ /
-    *
-d'g = -9.961292984514641e-08
-
-line search:
-      nf = 3,
-      ng = 3
-      alpha = 0.0006665091082457509
-iter = 938  , fxold = 3.881930e-09, fx =3.845414e-09, fxold-fx = 3.651614e-11
-
-gnorm2 = 4.069307e-09
-Time : 0.6073522567749023 second
-
-n = 10 :
-    |
-    |
-   \ /
-    *
-d'g = -1.1272948487907554e-07
-
-line search:
-      nf = 3,
-      ng = 3
-      alpha = 0.0005571941116239766
-iter = 1623 , fxold = 9.491560e-09, fx =9.457013e-09, fxold-fx = 3.454672e-11
-
-gnorm2 = 9.467376e-09
-Time : 1.8738925457000732 second
-
-n = 50 :
-    |
-    |
-   \ /
-    *
-d'g = -8.866863605011079e-08
-
-line search:
-      nf = 3,
-      ng = 3
-      alpha = 0.0005642909512470724
-iter = 7417 , fxold = 9.489828e-09, fx =9.462309e-09, fxold-fx = 2.751920e-11
-
-gnorm2 = 9.445286e-09
-Time : 9.827034711837769 second
-
-n = 100 :
-    |
-    |
-   \ /
-    *
-d'g = -2.457668003602979e-07
-
-line search:
-      nf = 3,
-      ng = 3
-      alpha = 0.0005069094165755859
-iter = 11110, fxold = 3.589226e-09, fx =3.520706e-09, fxold-fx = 6.851983e-11
-
-gnorm2 = 5.369581e-09
-Time : 21.921634674072266 second
-
-n = 200 :
-    |
-    |
-   \ /
-    *
-d'g = -1.0874654836777889e-07
-
-line search:
-      nf = 3,
-      ng = 3
-      alpha = 0.0005228172786725942
-iter = 23896, fxold = 4.896686e-09, fx =4.865416e-09, fxold-fx = 3.127002e-11
-
-gnorm2 = 5.202824e-09
-Time : 78.31190061569214 second
-
-n = 500 :
-    |
-    |
-   \ /
-    *
-d'g = -6.370412031058988e-08
-
-line search:
-      nf = 3,
-      ng = 3
-      alpha = 0.0005926189246969209
-iter = 59653, fxold = 9.474353e-09, fx =9.453589e-09, fxold-fx = 2.076375e-11
-
-gnorm2 = 9.605415e-09
-Time : 399.4094867706299 second
-
-n = 700 :
-    |
-    |
-   \ /
-    *
-d'g = -9.316379973361885e-08
-
-line search:
-      nf = 3,
-      ng = 3
-      alpha = 0.0005592401560803772
-iter = 87992, fxold = 9.576650e-09, fx =9.547994e-09, fxold-fx = 2.865552e-11
-
-gnorm2 = 9.632422e-09
-Time : 761.3441691398621 second
-
-n = 1000 :
-    |
-    |
-   \ /
-    *
-d'g = -2.037954244347085e-08
-
-line search:
-      nf = 3,
-      ng = 3
-      alpha = 0.0007511839757013269
-iter = 121880, fxold = 6.613951e-09, fx =6.605531e-09, fxold-fx = 8.419832e-12
-
-gnorm2 = 8.463572e-09
-Time : 1428.9531691074371 second
-
-n = 2000 :
-    |
-    |
-   \ /
-    *
-d'g = -2.4540826408072617e-08
-
-line search:
-      nf = 3,
-      ng = 3
-      alpha = 0.0009020067778946902
-iter = 243847, fxold = 3.939632e-09, fx =3.927457e-09, fxold-fx = 1.217480e-11
-
-gnorm2 = 7.142828e-09
-Time : 5523.534963846207 second
-
-
 
