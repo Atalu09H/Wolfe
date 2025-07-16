@@ -112,7 +112,7 @@ double myvalue
     f = 0. ;
     for (i = 0; i < (n-1); i++)
     {
-        f += 100.0 * pow((x[i+1] - pow(x[i], 2)), 2) + (1 - pow(x[i], 2)) ;
+        f += 100.0 * ((x[i+1] - (x[i]*x[i]))*(x[i+1] - (x[i]*x[i]))) + (1 - (x[i]*x[i]))*(1 - (x[i]*x[i]));
     }
     return (f) ;
 }
@@ -126,14 +126,14 @@ void mygrad
 {
     double t ;
     INT i ;
-    for (i = 0; i < sizeof(g); i++)
+    for (i = 0; i < (sizeof(g)/sizeof(g[0])); i++)
     {
         g[i] = 0.0;
     }
     for (i = 0; i < (n-1); i++)
     {
-        g[i] += -400.0 * x[i] * (x[i+1] - pow(x[i], 2)) - 2.0 * (1 - x[i]);
-        g[i+1] += 200.0 * (x[i+1] - pow(x[i], 2));
+        g[i] += -400.0 * x[i] * (x[i+1] - (x[i]*x[i])) - 2.0 * (1 - x[i]);
+        g[i+1] += 200.0 * (x[i+1] - (x[i]*x[i])) ;
     }
     return ;
 }
@@ -149,15 +149,15 @@ double myvalgrad
     INT i ;
     f = (double) 0 ;
     double t1, t2;
-    for (i = 0; i < sizeof(g); i++)
+    for (i = 0; i < (sizeof(g)/sizeof(g[0])); i++)
     {
         g[i] = 0.0;
     }
     for (i = 0; i < (n-1); i++)
     {
-        t1 = x[i+1] - pow(x[i], 2);
+        t1 = x[i+1] - (x[i]*x[i]);
         t2 = 1 - x[i];
-        f += 100.0 * pow(t1, 2) + pow(t2, 2);
+        f += 100.0 * (t1*t1) + (t2*t2);
         g[i] += -400.0 * x[i] * t1 - 2.0 *t2;
         g[i+1] += 200.0 * t1;
     }
