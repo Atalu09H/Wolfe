@@ -39,7 +39,7 @@ int main (void)
 	cg_stats_struct cg_stat;
 	
     /* allocate space for solution */
-    n = 2;
+    n = 10000;
     x = (double *) malloc (n*sizeof (double)) ;
 	d = (double *) malloc (n*sizeof (double)) ;
 	g = (double *) malloc (n*sizeof (double)) ;
@@ -49,8 +49,8 @@ int main (void)
 	/* set starting guess */
     for (i = 0; i < n; i++)
     {
-        if (i % 2 == 0) x [i] = -1.2;
-        else 1.0;
+        if (i % 2 == 0) x[i] = -1.2;
+        else x[i] = 1.0;
     }
 	fx=fx0 = myvalue(x,n);
 	mygrad(g,x,n);
@@ -101,13 +101,70 @@ int main (void)
 	getchar();
 }
 
+// double myvalue
+// (
+//     double   *x,
+//     INT       n
+// )
+// {
+//     double f, t ;
+//     INT i ;
+//     f = 0. ;
+//     for (i = 0; i < n; i++)
+//     {
+//         t = i+1 ;
+//         t = sqrt (t) ;
+//         f += exp (x [i]) - t*x [i] ;
+//     }
+//     return (f) ;
+// }
+
+// void mygrad
+// (
+//     double    *g,
+//     double    *x,
+//     INT        n
+// )
+// {
+//     double t ;
+//     INT i ;
+//     for (i = 0; i < n; i++)
+//     {
+//         t = i + 1 ;
+//         t = sqrt (t) ;
+//         g [i] = exp (x [i]) -  t ;
+//     }
+//     return ;
+// }
+
+// double myvalgrad
+// (
+//     double    *g,
+//     double    *x,
+//     INT        n
+// )
+// {
+//     double ex, f, t ;
+//     INT i ;
+//     f = (double) 0 ;
+//     for (i = 0; i < n; i++)
+//     {
+//         t = i + 1 ;
+//         t = sqrt (t) ;
+//         ex = exp (x [i]) ;
+//         f += ex - t*x [i] ;
+//         g [i] = ex -  t ;
+//     }
+//     return (f) ;
+// }
+
 double myvalue
 (
     double   *x,
     INT       n
 )
 {
-    double f, t ;
+    double f;
     INT i ;
     f = 0. ;
     for (i = 0; i < (n-1); i++)
@@ -124,9 +181,8 @@ void mygrad
     INT        n
 )
 {
-    double t ;
     INT i ;
-    for (i = 0; i < (sizeof(g)/sizeof(g[0])); i++)
+    for (i = 0; i < n; i++)
     {
         g[i] = 0.0;
     }
@@ -145,11 +201,11 @@ double myvalgrad
     INT        n
 )
 {
-    double ex, f, t ;
+    double f, t ;
     INT i ;
     f = (double) 0 ;
     double t1, t2;
-    for (i = 0; i < (sizeof(g)/sizeof(g[0])); i++)
+    for (i = 0; i < n; i++)
     {
         g[i] = 0.0;
     }

@@ -4,8 +4,14 @@ n = 2 :
     |
    \ /
     *
-cpp-:
-
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.001238
+iter = 1690 , fxold = 1.034978e-08, fx= 1.032927e-08, fxold-fx=2.050784e-11
+gnorm2 = 9.509001e-09
 
 python-:
 d'g = -1.654774381772352e-07
@@ -24,8 +30,14 @@ n = 3 :
     |
    \ /
     *
-cpp-:
-
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.000747
+iter = 2560 , fxold = 1.007800e-08, fx= 1.005013e-08, fxold-fx=2.786842e-11
+gnorm2 = 9.685270e-09
 
 python-:
 d'g = -9.961292984514641e-08
@@ -44,8 +56,14 @@ n = 10 :
     |
    \ /
     *
-cpp-:
-
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 6,
+      ng=5
+      alpha=0.316366
+iter = 4289 , fxold = 1.309209e-08, fx= 9.286073e-09, fxold-fx=3.806013e-09
+gnorm2 = 9.800997e-09
 
 python-:
 d'g = -1.1272948487907554e-07
@@ -64,8 +82,14 @@ n = 50 :
     |
    \ /
     *
-cpp-:
-
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.000640
+iter = 6803 , fxold = 9.128031e-09, fx= 9.113383e-09, fxold-fx=1.464851e-11
+gnorm2 = 9.838618e-09
 
 python-:
 d'g = -8.866863605011079e-08
@@ -84,8 +108,14 @@ n = 100 :
     |
    \ /
     *
-cpp-:
-
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.000557
+iter = 7931 , fxold = 9.790299e-09, fx= 9.760962e-09, fxold-fx=2.933735e-11
+gnorm2 = 9.738654e-09
 
 python-:
 d'g = -2.457668003602979e-07
@@ -104,8 +134,14 @@ n = 200 :
     |
    \ /
     *
-cpp-:
-
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.000617
+iter = 10907, fxold = 9.523275e-09, fx= 9.506148e-09, fxold-fx=1.712639e-11
+gnorm2 = 9.963959e-09
 
 python-:
 d'g = -1.0874654836777889e-07
@@ -124,8 +160,14 @@ n = 500 :
     |
    \ /
     *
-cpp-:
-
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.000607
+iter = 19882, fxold = 9.121703e-09, fx= 9.104581e-09, fxold-fx=1.712194e-11
+gnorm2 = 9.455189e-09
 
 python-:
 d'g = -6.370412031058988e-08
@@ -144,8 +186,14 @@ n = 700 :
     |
    \ /
     *
-cpp-:
-
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.000583
+iter = 25590, fxold = 9.555680e-09, fx= 9.534294e-09, fxold-fx=2.138536e-11
+gnorm2 = 9.653403e-09
 
 python-:
 d'g = -9.316379973361885e-08
@@ -164,8 +212,14 @@ n = 1000 :
     |
    \ /
     *
-cpp-:
-
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.000548
+iter = 34289, fxold = 9.598252e-09, fx= 9.565525e-09, fxold-fx=3.272663e-11
+gnorm2 = 9.562391e-09
 
 python-:
 d'g = -2.037954244347085e-08
@@ -184,8 +238,14 @@ n = 2000 :
     |
    \ /
     *
-\cpp-:
-
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.000652
+iter = 64346, fxold = 8.406071e-09, fx= 8.392676e-09, fxold-fx=1.339475e-11
+gnorm2 = 9.130400e-09
 
 python-:
 d'g = -2.4540826408072617e-08
@@ -199,5 +259,30 @@ iter = 243847, fxold = 3.939632e-09, fx =3.927457e-09, fxold-fx = 1.217480e-11
 gnorm2 = 7.142828e-09
 Time : 5523.534963846207 second
 
+n = 3000 :
+    |
+    |
+   \ /
+    *
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.000522
+iter = 93555, fxold = 9.278631e-09, fx= 9.215535e-09, fxold-fx=6.309590e-11
+gnorm2 = 9.974793e-09
 
-
+n = 10000 :
+    |
+    |
+   \ /
+    *
+cpp_:
+d'g = -0.000000
+line search:
+      nf = 3,
+      ng=3
+      alpha=0.000587
+iter = 299265, fxold = 9.646720e-09, fx= 9.625868e-09, fxold-fx=2.085199e-11
+gnorm2 = 9.783652e-09
