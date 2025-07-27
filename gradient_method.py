@@ -99,3 +99,14 @@ def gradient_method():
 if __name__ == "__main__":
     gradient_method()        
             
+            
+            
+            
+################################################            
+#                                              #
+#       Student: Hossein Atalu                 #
+#       Github: Atalu09H                       #      
+#                                              #
+#       Supervisor: Dr. Khatere Ghorbani       #   
+#                                              #
+################################################            
