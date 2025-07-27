@@ -104,9 +104,11 @@ if __name__ == "__main__":
     gradient_method()        
             
             
-#################################            
-#                               #
-#       Hossein Atalu           #
-#       Github : Atalu09H       #     
-#                               #
-#################################
+################################################            
+#                                              #
+#       Student: Hossein Atalu                 #
+#       Github: Atalu09H                       #      
+#                                              #
+#       Supervisor: Dr. Khatere Ghorbani       #   
+#                                              #
+################################################
