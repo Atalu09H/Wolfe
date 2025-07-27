@@ -103,3 +103,10 @@ def gradient_method():
 if __name__ == "__main__":
     gradient_method()        
             
+            
+#################################            
+#                               #
+#       Hossein Atalu           #
+#       Github : Atalu09H       #     
+#                               #
+#################################
